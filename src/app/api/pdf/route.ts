@@ -1,0 +1,94 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { db } from '@/db';
+import { cvs } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { generatePdfBuffer } from '@/lib/pdf-engine';
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const cvId = searchParams.get('cvId');
+
+    if (!cvId) {
+      return new NextResponse('Missing cvId', { status: 400 });
+    }
+
+    const [cv] = await db
+      .select()
+      .from(cvs)
+      .where(eq(cvs.id, cvId))
+      .limit(1);
+
+    if (!cv) {
+      return new NextResponse('CV not found', { status: 404 });
+    }
+
+    // Comprobar propiedad
+    if (cv.userId !== session.user.id) {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
+    const buffer = await generatePdfBuffer(cv.content, {
+      template: cv.templateName,
+      accentColor: cv.accentColor || '#1a5f7a',
+      fontFamily: cv.fontFamily || 'helvetica',
+      pageMargin: cv.pageMargin ?? 36,
+      fontSize: (cv.scale ?? 1.0) * 12.5, // back-converting scale to fontSize
+      showIcons: true
+    });
+
+    return new Response(new Uint8Array(buffer), {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="cv-${cvId}.pdf"`,
+        'Cache-Control': 'no-store, max-age=0'
+      }
+    });
+  } catch (error: any) {
+    console.error('Error generating PDF:', error);
+    return new NextResponse(error.message || 'Internal Server Error', { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const body = await req.json();
+    const { content, template, accentColor, fontFamily, pageMargin, scale } = body;
+
+    if (!content) {
+      return new NextResponse('Missing content', { status: 400 });
+    }
+
+    const buffer = await generatePdfBuffer(content, {
+      template: template || 'harvard',
+      accentColor: accentColor || null,
+      fontFamily: fontFamily || 'helvetica',
+      pageMargin: pageMargin || 36,
+      fontSize: (scale || 1.0) * 12.5,
+      showIcons: true
+    });
+
+    return new Response(new Uint8Array(buffer), {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'inline; filename="preview.pdf"',
+        'Cache-Control': 'no-store, max-age=0'
+      }
+    });
+  } catch (error: any) {
+    console.error('Error generating live PDF preview:', error);
+    return new NextResponse(error.message || 'Internal Server Error', { status: 500 });
+  }
+}
+export const dynamic = 'force-dynamic';
