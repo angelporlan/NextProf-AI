@@ -38,7 +38,7 @@ export class AIService {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "qwen/qwen3.6-plus:free",
+          model: "meta-llama/llama-3.1-8b-instruct:free",
           messages: [
             {
               role: "system",

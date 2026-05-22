@@ -446,47 +446,60 @@ function drawContactLines(doc: any, contact: ContactInfo[], layout: any, showIco
   const iconSize = layout.contactSize * 0.9;
   const iconGap = 3;
 
-  const renderLine = (items: ContactInfo[], y: number) => {
-    let totalWidth = 0;
-    const itemData = items.map((item, i) => {
-      const text = `${item.label}: ${item.value}`;
-      const textWidth = doc.widthOfString(text);
-      const iconType = showIcons ? getIconType(item.label, item.value) : null;
-      const iconWidth = iconType ? iconSize + iconGap : 0;
-      const sepWidth = (i < items.length - 1) ? doc.widthOfString(sep) : 0;
-      totalWidth += iconWidth + textWidth + sepWidth;
-      return { text, textWidth, iconType, iconWidth, sepWidth };
-    });
-
-    let currentX = margin + (cWidth - totalWidth) / 2;
-    itemData.forEach((data) => {
-      if (data.iconType) {
-        drawIcon(doc, data.iconType, currentX, y - 0.5, iconSize, COLORS.muted);
-        currentX += data.iconWidth;
-      }
-      doc.text(data.text, currentX, y, { lineBreak: false });
-      currentX += data.textWidth;
-      if (data.sepWidth > 0) {
-        doc.text(sep, currentX, y, { lineBreak: false });
-        currentX += data.sepWidth;
-      }
-    });
-  };
-
   doc.font(ff.regular)
     .fontSize(layout.contactSize)
     .fillColor(COLORS.muted);
 
-  const firstLineItems = contact.slice(0, 3);
-  renderLine(firstLineItems, doc.y);
-  doc.y += layout.contactSize;
+  const lines: { items: any[], width: number }[] = [];
+  let currentLine: any[] = [];
+  let currentLineWidth = 0;
 
-  if (contact.length > 3) {
-    doc.y += 2.5;
-    const secondLineItems = contact.slice(3);
-    renderLine(secondLineItems, doc.y);
-    doc.y += layout.contactSize;
+  contact.forEach((item, i) => {
+    const text = `${item.label}: ${item.value}`;
+    const textWidth = doc.widthOfString(text);
+    const iconType = showIcons ? getIconType(item.label, item.value) : null;
+    const iconWidth = iconType ? iconSize + iconGap : 0;
+    const sepWidth = doc.widthOfString(sep);
+    const itemWidth = iconWidth + textWidth;
+
+    const widthToAdd = currentLine.length > 0 ? sepWidth + itemWidth : itemWidth;
+
+    if (currentLine.length > 0 && currentLineWidth + widthToAdd > cWidth) {
+      lines.push({ items: currentLine, width: currentLineWidth });
+      currentLine = [{ text, textWidth, iconType, iconWidth, sepWidth: 0 }];
+      currentLineWidth = itemWidth;
+    } else {
+      if (currentLine.length > 0) {
+        currentLine[currentLine.length - 1].sepWidth = sepWidth;
+      }
+      currentLine.push({ text, textWidth, iconType, iconWidth, sepWidth: 0 });
+      currentLineWidth += widthToAdd;
+    }
+  });
+
+  if (currentLine.length > 0) {
+    lines.push({ items: currentLine, width: currentLineWidth });
   }
+
+  let currentY = doc.y;
+  lines.forEach(line => {
+    let currentX = margin + (cWidth - line.width) / 2;
+    line.items.forEach((data) => {
+      if (data.iconType) {
+        drawIcon(doc, data.iconType, currentX, currentY - 0.5, iconSize, COLORS.muted);
+        currentX += data.iconWidth;
+      }
+      doc.text(data.text, currentX, currentY, { lineBreak: false });
+      currentX += data.textWidth;
+      if (data.sepWidth > 0) {
+        doc.text(sep, currentX, currentY, { lineBreak: false });
+        currentX += data.sepWidth;
+      }
+    });
+    currentY += layout.contactSize + 2.5;
+  });
+
+  doc.y = currentY - 2.5;
 }
 
 function drawSkillsSection(doc: any, section: Section, layout: any, cust: CustomizeOptions) {
