@@ -320,29 +320,48 @@ export function parseCvMarkdown(content: string): CVContent {
 // TEMPLATE: HARVARD (DEFAULT CLASSIC)
 // ==========================================
 
+function drawSmallCapsText(doc: any, text: string, x: number, y: number, baseSize: number, fontBold: string, color: string) {
+  doc.y = y;
+  let isFirst = true;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const isUpper = char === char.toUpperCase() && char !== char.toLowerCase();
+    const size = isUpper ? baseSize : baseSize * 0.75;
+    
+    doc.font(fontBold).fontSize(size).fillColor(color);
+    
+    const options: any = {
+      continued: i < text.length - 1,
+      lineBreak: false
+    };
+    
+    if (isFirst) {
+      doc.text(char.toUpperCase(), x, y, options);
+      isFirst = false;
+    } else {
+      doc.text(char.toUpperCase(), options);
+    }
+  }
+  doc.fontSize(baseSize);
+  doc.y = y + baseSize + 2;
+}
+
 function drawSectionHeading(doc: any, title: string, layout: any, cust: CustomizeOptions) {
   const margin = cust.pageMargin || PAGE_MARGIN;
   const cWidth = 595.28 - margin * 2;
   const ff = cust.fontFamily || FONT_FAMILIES.helvetica;
   const accent = cust.accentColor || COLORS.accent;
-  const rule = cust.accentColor || COLORS.rule;
 
   doc.moveDown(layout.sectionGap);
 
-  doc.font(ff.bold)
-    .fontSize(layout.sectionSize)
-    .fillColor(accent)
-    .text(title.toUpperCase(), margin, doc.y, {
-      width: cWidth,
-      align: 'left',
-      characterSpacing: 0.5
-    });
+  const startY = doc.y;
+  drawSmallCapsText(doc, title, margin, startY, layout.sectionSize, ff.bold, accent);
 
   const ruleY = doc.y + 2.5;
   doc.moveTo(margin, ruleY)
     .lineTo(margin + cWidth, ruleY)
-    .strokeColor(rule)
-    .lineWidth(0.75)
+    .strokeColor(accent)
+    .lineWidth(1.5)
     .stroke();
 
   doc.y = ruleY + 4.5;
@@ -684,13 +703,23 @@ function renderModernCvPdf(doc: any, cv: CVContent, scale: number, showIcons: bo
   // Sidebar Sections
   for (const section of sidebarSections) {
     drawSidebarHeading(section.title);
-    doc.font(ff.regular).fontSize(9 * scale).fillColor(sidebarTextColor);
     const items = [...(section.paragraphs || []), ...(section.bullets || [])];
     for (const item of items) {
-      doc.text('• ' + item, sidebarPadding + 2, currentY, { 
-        width: sidebarWidth - sidebarPadding * 2 - 2,
-        lineGap: 2.5
-      });
+      const colonIdx = item.indexOf(':');
+      if (colonIdx !== -1) {
+        const label = item.substring(0, colonIdx).trim();
+        const value = item.substring(colonIdx + 1).trim();
+        doc.font(ff.bold).fontSize(9 * scale).fillColor(accentColor)
+          .text('• ' + label + ': ', sidebarPadding + 2, currentY, { continued: true, width: sidebarWidth - sidebarPadding * 2 - 2 });
+        doc.font(ff.regular).fillColor(sidebarTextColor)
+          .text(value, { width: sidebarWidth - sidebarPadding * 2 - 2, lineGap: 2.5 });
+      } else {
+        doc.font(ff.regular).fontSize(9 * scale).fillColor(sidebarTextColor);
+        doc.text('• ' + item, sidebarPadding + 2, currentY, { 
+          width: sidebarWidth - sidebarPadding * 2 - 2,
+          lineGap: 2.5
+        });
+      }
       currentY = doc.y + 3;
     }
     currentY += 15;
@@ -711,16 +740,14 @@ function renderModernCvPdf(doc: any, cv: CVContent, scale: number, showIcons: bo
   currentY = doc.y + 20;
 
   const drawMainHeading = (title: string) => {
-    doc.font(ff.bold)
-      .fontSize(fs(12))
-      .fillColor(accentColor)
-      .text(title.toUpperCase(), mainX, currentY, { characterSpacing: 0.5 });
+    const startY = currentY;
+    drawSmallCapsText(doc, title, mainX, startY, fs(12), ff.bold, accentColor);
     
     currentY = doc.y + 3;
     doc.moveTo(mainX, currentY)
       .lineTo(mainX + mainWidth, currentY)
-      .strokeColor(lineColor)
-      .lineWidth(1)
+      .strokeColor(accentColor)
+      .lineWidth(1.5)
       .stroke();
     currentY += 10;
   };
@@ -827,13 +854,11 @@ function renderMinimalCvPdf(doc: any, cv: CVContent, scale: number, showIcons: b
 
   // Sections
   for (const section of cv.sections) {
-    doc.font(ff.bold).fontSize(fs(10)).fillColor(cfg.accentColor)
-      .text(section.title.toUpperCase(), cfg.marginSide, y, {
-        width: contentWidth, characterSpacing: 1.5
-      });
+    const startY = y;
+    drawSmallCapsText(doc, section.title, cfg.marginSide, startY, fs(10), ff.bold, cfg.accentColor);
     y = doc.y + 3;
     doc.moveTo(cfg.marginSide, y).lineTo(cfg.marginSide + contentWidth, y)
-      .strokeColor(cfg.ruleColor).lineWidth(0.3).stroke();
+      .strokeColor(cfg.accentColor).lineWidth(1.5).stroke();
     y += 8;
 
     for (const p of section.paragraphs || []) {
@@ -974,13 +999,22 @@ function renderCreativeCvPdf(doc: any, cv: CVContent, scale: number, showIcons: 
 
   for (const section of sidebarSections) {
     drawSidebarHeading(section.title);
-    doc.font(ff.regular).fontSize(fs(8)).fillColor(cfg.sidebarTextColor);
     const items = [...(section.paragraphs || []), ...(section.bullets || [])];
     for (const item of items) {
-      doc.font(ff.regular).fontSize(fs(8)).fillColor(cfg.sidebarTextColor);
-      doc.text('● ' + item, sideContentX + 2, sideY, {
-        width: sideContentWidth - 4, lineGap: 2
-      });
+      const colonIdx = item.indexOf(':');
+      if (colonIdx !== -1) {
+        const label = item.substring(0, colonIdx).trim();
+        const value = item.substring(colonIdx + 1).trim();
+        doc.font(ff.bold).fontSize(fs(8)).fillColor(cfg.accentColor)
+          .text('● ' + label + ': ', sideContentX + 2, sideY, { continued: true, width: sideContentWidth - 4 });
+        doc.font(ff.regular).fillColor(cfg.sidebarTextColor)
+          .text(value, { width: sideContentWidth - 4, lineGap: 2 });
+      } else {
+        doc.font(ff.regular).fontSize(fs(8)).fillColor(cfg.sidebarTextColor);
+        doc.text('● ' + item, sideContentX + 2, sideY, {
+          width: sideContentWidth - 4, lineGap: 2
+        });
+      }
       sideY = doc.y + 3;
     }
     sideY += 12;
@@ -998,12 +1032,11 @@ function renderCreativeCvPdf(doc: any, cv: CVContent, scale: number, showIcons: 
 
   // Main sections
   for (const section of mainSections) {
-    doc.rect(mainX, y + 1, 4, fs(11)).fill(cfg.accentColor);
-    doc.font(ff.bold).fontSize(fs(11)).fillColor(cfg.mainTextColor)
-      .text(section.title.toUpperCase(), mainX + 12, y, { width: mainWidth - 12, characterSpacing: 0.5 });
+    const startY = y;
+    drawSmallCapsText(doc, section.title, mainX, startY, fs(11), ff.bold, cfg.accentColor);
     y = doc.y + 4;
     doc.moveTo(mainX, y).lineTo(mainX + mainWidth, y)
-      .strokeColor(cfg.lineColor).lineWidth(0.8).stroke();
+      .strokeColor(cfg.accentColor).lineWidth(1.5).stroke();
     y += 8;
 
     for (const p of section.paragraphs || []) {
@@ -1142,10 +1175,10 @@ function renderSwissCvPdf(doc: any, cv: CVContent, scale: number, showIcons: boo
       if (colonIdx !== -1) {
         const label = item.substring(0, colonIdx).trim();
         const value = item.substring(colonIdx + 1).trim();
-        doc.font(ff.bold).fontSize(fs(7.5)).fillColor(cfg.sidebarTextColor)
+        doc.font(ff.bold).fontSize(fs(7.5)).fillColor(cfg.accentColor)
           .text(label, sideContentX, sideY, { width: sideContentWidth });
         sideY = doc.y;
-        doc.font(ff.regular).fontSize(fs(7)).fillColor(cfg.sidebarMutedColor)
+        doc.font(ff.regular).fontSize(fs(7.5)).fillColor(cfg.sidebarTextColor)
           .text(value, sideContentX, sideY, { width: sideContentWidth, lineGap: 1.5 });
       } else {
         doc.font(ff.regular).fontSize(fs(7.5)).fillColor(cfg.sidebarTextColor)
@@ -1168,13 +1201,11 @@ function renderSwissCvPdf(doc: any, cv: CVContent, scale: number, showIcons: boo
 
   // Main Sections
   for (const section of mainSections) {
-    doc.font(ff.bold).fontSize(fs(11)).fillColor(cfg.accentColor)
-      .text(section.title.toUpperCase(), mainX, y, {
-        width: mainWidth, characterSpacing: 1
-      });
+    const startY = y;
+    drawSmallCapsText(doc, section.title, mainX, startY, fs(11), ff.bold, cfg.accentColor);
     y = doc.y + 2;
     doc.moveTo(mainX, y).lineTo(mainX + mainWidth, y)
-      .strokeColor(cfg.lineColor).lineWidth(0.3).stroke();
+      .strokeColor(cfg.accentColor).lineWidth(1.5).stroke();
     y += 8;
 
     for (const p of section.paragraphs || []) {

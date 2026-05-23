@@ -8,7 +8,8 @@ import PdfViewer from './PdfViewer';
 import { updateCvStyling } from '@/app/dashboard/actions';
 import { 
   Sparkles, ArrowLeft, Settings, Type, Layout, Grid, Sliders, Palette, 
-  Crown, Briefcase, Building2, Link, FileText, CheckCircle2, ChevronRight, X, Play, RefreshCw 
+  Crown, Briefcase, Building2, Link, FileText, CheckCircle2, ChevronRight, X, Play, RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 import LinkNext from 'next/link';
 import AlertModal from '../ui/AlertModal';
@@ -23,6 +24,9 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [pdfVersion, setPdfVersion] = useState(0);
+
+  // Shared Save Status State
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
   // Estados de Estilo
   const [templateName, setTemplateName] = useState(cv.templateName);
@@ -178,7 +182,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[#030712] flex flex-col relative overflow-hidden h-screen">
       {/* Background glow effects */}
       <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-sky-950/20 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-950/15 blur-[120px] pointer-events-none" />
@@ -219,17 +223,19 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
         </div>
       </header>
 
-      {/* Toolbar Flotante de Estilos */}
-      <div className="w-full bg-[#070b19]/60 backdrop-blur-md border-b border-slate-900 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-20">
-        <div className="flex flex-wrap items-center gap-6">
+      {/* Toolbar Flotante de Estilos (Supercompacta) */}
+      <div className="w-full bg-[#070b19]/90 backdrop-blur-md border-b border-slate-900 px-6 py-2 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-20">
+        <div className="flex flex-wrap items-center">
           {/* Selector de Plantilla */}
-          <div className="flex items-center gap-2.5">
-            <Layout className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Diseño</span>
+          <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-slate-800/80">
+            <span className="text-[9px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1">
+              <Layout className="w-3 h-3 text-slate-400" />
+              Diseño
+            </span>
             <select
               value={templateName}
               onChange={handleTemplateChange}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 font-medium focus:outline-none focus:border-sky-500 transition-all cursor-pointer"
+              className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 font-medium focus:outline-none focus:border-sky-500 transition-all cursor-pointer h-7"
             >
               <option value="harvard">Harvard (Básico)</option>
               <option value="modern" className={!isPremium ? 'text-slate-500' : ''}>Modern (Pro) 👑</option>
@@ -240,13 +246,15 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
           </div>
 
           {/* Selector de Fuente */}
-          <div className="flex items-center gap-2.5">
-            <Type className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Fuente</span>
+          <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-slate-800/80">
+            <span className="text-[9px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1">
+              <Type className="w-3 h-3 text-slate-400" />
+              Fuente
+            </span>
             <select
               value={fontFamily}
               onChange={handleFontChange}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 font-medium focus:outline-none focus:border-sky-500 transition-all cursor-pointer capitalize"
+              className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 font-medium focus:outline-none focus:border-sky-500 transition-all cursor-pointer capitalize h-7"
             >
               <option value="helvetica">Helvetica (Sans)</option>
               <option value="times">Times (Serif)</option>
@@ -255,69 +263,83 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
           </div>
 
           {/* Selector de Margen */}
-          <div className="flex items-center gap-2.5">
-            <Sliders className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Margen ({pageMargin}pt)</span>
-            <input
-              type="range"
-              min="18"
-              max="72"
-              step="6"
-              value={pageMargin}
-              onChange={handleMarginChange}
-              className="w-24 accent-sky-500 bg-slate-950 border border-slate-850 rounded-lg h-2"
-            />
+          <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-slate-800/80">
+            <span className="text-[9px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1">
+              <Sliders className="w-3 h-3 text-slate-400" />
+              Margen ({pageMargin}pt)
+            </span>
+            <div className="flex items-center h-7">
+              <input
+                type="range"
+                min="18"
+                max="72"
+                step="6"
+                value={pageMargin}
+                onChange={handleMarginChange}
+                className="w-24 accent-sky-500 bg-slate-950 border border-slate-850 rounded-lg h-1.5 cursor-pointer"
+              />
+            </div>
           </div>
 
           {/* Selector de Escala */}
-          <div className="flex items-center gap-2.5">
-            <Grid className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Escala ({scale.toFixed(1)}x)</span>
-            <input
-              type="range"
-              min="0.6"
-              max="1.4"
-              step="0.1"
-              value={scale}
-              onChange={handleScaleChange}
-              className="w-24 accent-sky-500 bg-slate-950 border border-slate-850 rounded-lg h-2"
-            />
+          <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-slate-800/80">
+            <span className="text-[9px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1">
+              <Grid className="w-3 h-3 text-slate-400" />
+              Escala ({scale.toFixed(1)}x)
+            </span>
+            <div className="flex items-center h-7">
+              <input
+                type="range"
+                min="0.6"
+                max="1.4"
+                step="0.1"
+                value={scale}
+                onChange={handleScaleChange}
+                className="w-24 accent-sky-500 bg-slate-950 border border-slate-850 rounded-lg h-1.5 cursor-pointer"
+              />
+            </div>
           </div>
         </div>
 
         {/* Selector de Color de Acento */}
-        <div className="flex items-center gap-2.5">
-          <Palette className="w-4 h-4 text-slate-400" />
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Acento</span>
-          <div className="flex items-center gap-2 bg-slate-950/60 border border-slate-850 px-2 py-1.5 rounded-xl">
+        <div className="flex flex-col gap-1">
+          <span className="text-[9px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1">
+            <Palette className="w-3 h-3 text-slate-400" />
+            Acento
+          </span>
+          <div className="flex items-center gap-1.5 bg-slate-950/60 border border-slate-850 px-2 py-0.5 rounded-xl h-7">
             {colorPresets.map((preset) => (
               <button
                 key={preset.hex}
                 onClick={() => handleAccentChange(preset.hex)}
-                className={`w-4 h-4 rounded-full border border-black/30 transition-transform hover:scale-125 ${accentColor === preset.hex ? 'ring-2 ring-sky-500' : ''}`}
+                className={`w-4 h-4 rounded-full border border-black/30 transition-transform hover:scale-125 shrink-0 ${accentColor === preset.hex ? 'ring-2 ring-sky-500 ring-offset-1 ring-offset-slate-950' : ''}`}
                 style={{ backgroundColor: preset.hex }}
                 title={preset.name}
               />
             ))}
-            {/* Selector de color manual personalizado */}
-            <input
-              type="color"
-              value={accentColor}
-              onChange={(e) => handleAccentChange(e.target.value)}
-              className="w-5 h-5 rounded-md border border-slate-800 bg-transparent cursor-pointer"
-              title="Color personalizado"
-            />
+            {/* Round 16px manual color picker container */}
+            <div className="relative w-4 h-4 rounded-full border border-slate-800 overflow-hidden cursor-pointer hover:scale-125 transition-all shrink-0">
+              <input
+                type="color"
+                value={accentColor}
+                onChange={(e) => handleAccentChange(e.target.value)}
+                className="absolute inset-0 w-8 h-8 -translate-x-2 -translate-y-2 cursor-pointer bg-transparent border-0 p-0"
+                title="Color personalizado"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Panel del Editor y Visor en Split Screen */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 overflow-hidden h-[calc(100vh-125px)]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 overflow-hidden h-[calc(100vh-165px)]">
         <div className="h-full min-h-[350px] lg:min-h-0">
           <MarkdownEditor
             cvId={cv.id}
             initialContent={cv.content}
             onSave={handleEditorSave}
+            saveStatus={saveStatus}
+            setSaveStatus={setSaveStatus}
           />
         </div>
         <div className="h-full min-h-[400px] lg:min-h-0">
@@ -531,6 +553,44 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
           router.push('/dashboard');
         }}
       />
+
+      {/* Barra de estado inferior fija (Fondo oscuro, borde superior fino) */}
+      <footer className="w-full h-9 bg-[#090d16]/90 border-t border-slate-900 px-6 flex items-center justify-between shrink-0 relative z-30 text-[10px] text-slate-400 font-medium">
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-slate-500">Guía rápida:</span>
+          <span className="font-semibold text-purple-400">## Título 2</span>
+          <span className="text-slate-700">|</span>
+          <span className="font-semibold text-purple-400">### Título 3</span>
+          <span className="text-slate-700">|</span>
+          <span className="font-semibold text-white">**Negrita**</span>
+          <span className="text-slate-700">|</span>
+          <span className="italic text-slate-350">*Cursiva*</span>
+          <span className="text-slate-700">|</span>
+          <span className="font-semibold text-sky-400">- Listas</span>
+        </div>
+
+        {/* Estado del Guardado */}
+        <div className="flex items-center gap-2">
+          {saveStatus === 'saved' && (
+            <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-450">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              Guardado en la nube
+            </span>
+          )}
+          {saveStatus === 'saving' && (
+            <span className="flex items-center gap-1.5 text-[10px] font-bold text-sky-400">
+              <RefreshCw className="w-3.5 h-3.5 text-sky-500 animate-spin" />
+              Guardando cambios...
+            </span>
+          )}
+          {saveStatus === 'error' && (
+            <span className="flex items-center gap-1.5 text-[10px] font-bold text-rose-455">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
+              Error de conexión
+            </span>
+          )}
+        </div>
+      </footer>
     </div>
   );
 }
