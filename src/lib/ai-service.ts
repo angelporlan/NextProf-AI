@@ -58,7 +58,7 @@ export class AIService {
       if (dbPrompt) {
         systemPrompt = dbPrompt.systemPrompt;
         if (dbPrompt.isStrict) {
-          systemPrompt += "\n\n¡REGLA DE FORMATO SUPERESTRICTA!: Debes devolver única y exclusivamente el contenido del currículum optimizado en formato Markdown (.MD). No incluyas explicaciones, introducciones, preámbulos, saludos, comentarios iniciales ni finales. NO envuelvas el resultado en bloques de código de triple acento grave (evita ```markdown y ```). Tu respuesta completa debe ser directamente el currículum parseable.";
+          systemPrompt += "\n\n¡REGLA DE FORMATO SUPERESTRICTA!: Debes devolver única y exclusivamente el contenido del currículum optimizado en formato Markdown (.MD). No incluyas explicaciones, introducciones, preámbulos, saludos, comentarios iniciales ni finales. NO envuelvas el resultado en bloques de código de triple acento grave (evita ```markdown y ```). Tu respuesta completa debe ser directamente el currículum parseable.\n\nEstructura de formato de currículum requerida:\n- Usa '## Título' para los títulos de secciones principales (ej. ## Experiencia, ## Educación, ## Habilidades)\n- Usa '### Título' para las entradas de puestos, instituciones o proyectos (ej. ### Desarrollador Frontend)\n- Usa '**Negrita**' para nombres de empresas, etiquetas o categorías\n- Usa '*Cursiva*' para fechas, subgrupos o descripciones secundarias\n- Usa '- Listas' con guiones simples para los bullets de logros y responsabilidades.";
         }
         userPromptTemplate = dbPrompt.userPrompt;
       }
