@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { cvs, users, jobOffers } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { Sparkles, Plus, FileText, Trash2, ArrowRight, Kanban, CreditCard, CheckCircle2, Crown, LogOut } from 'lucide-react';
+import { Sparkles, Plus, FileText, Trash2, ArrowRight, Kanban, CreditCard, CheckCircle2, Crown, LogOut, Shield } from 'lucide-react';
 import { createBaseCv, deleteCv } from './actions';
 import { revalidatePath } from 'next/cache';
 import { isProSubscription } from '@/lib/subscription';
@@ -133,6 +133,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <Kanban className="w-4 h-4" />
               <span>Ver Kanban</span>
             </Link>
+
+            {dbUser?.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="text-purple-400 hover:text-purple-300 flex items-center gap-1.5 text-xs font-bold bg-purple-950/20 border border-purple-800/20 hover:border-purple-800/40 px-3.5 py-2 rounded-xl transition-all shadow-sm shadow-purple-950/5"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Panel Admin</span>
+              </Link>
+            )}
             
             <a
               href="/api/auth/signout"
