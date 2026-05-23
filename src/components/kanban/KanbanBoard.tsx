@@ -99,14 +99,14 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
       </div>
 
       {/* Grid de Columnas (Kanban) */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start overflow-x-auto pb-4 md:overflow-x-visible">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start overflow-x-auto pb-4">
         {columns.map((column) => {
           const columnOffers = offers.filter((offer) => offer.status === column.id);
 
           return (
             <div
               key={column.id}
-              className="flex flex-col min-w-[280px] md:min-w-0 glass-card p-4 rounded-2xl border border-slate-800/80 bg-slate-900/30 relative overflow-hidden"
+              className="flex flex-col min-w-[280px] md:min-w-[240px] lg:min-w-[260px] xl:min-w-0 glass-card p-4 rounded-2xl border border-slate-800/80 bg-slate-900/30 relative overflow-hidden"
               style={{
                 boxShadow: `inset 0 0 20px ${column.glowColor}, 0 4px 30px rgba(0,0,0,0.4)`
               }}

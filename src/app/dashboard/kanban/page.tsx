@@ -41,7 +41,7 @@ export default async function KanbanPage() {
     .orderBy(desc(jobOffers.updatedAt));
 
   return (
-    <div className="min-h-screen bg-[#030712] relative">
+    <div className="min-h-screen bg-[#030712] relative overflow-x-hidden">
       {/* Background blur */}
       <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-sky-950/20 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-950/15 blur-[120px] pointer-events-none" />

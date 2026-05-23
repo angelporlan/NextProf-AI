@@ -45,7 +45,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground antialiased font-sans selection:bg-slate-800 selection:text-white;
+    @apply bg-background text-foreground antialiased font-sans selection:bg-slate-800 selection:text-white overflow-x-hidden;
   }
 }
 

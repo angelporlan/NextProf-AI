@@ -317,7 +317,7 @@ export default function AdminClient({
   );
 
   return (
-    <div className="min-h-screen bg-[#030712] relative text-white">
+    <div className="min-h-screen bg-[#030712] relative text-white overflow-x-hidden">
       {/* Glow effects background */}
       <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-sky-950/20 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[5%] left-[-15%] w-[45%] h-[45%] rounded-full bg-purple-950/15 blur-[120px] pointer-events-none" />
