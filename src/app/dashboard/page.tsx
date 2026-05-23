@@ -106,6 +106,27 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           <div className="flex items-center gap-4">
             <Link
+              href="/dashboard/subscription"
+              className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
+                isPremium
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/20 shadow-md shadow-amber-500/5'
+                  : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+              }`}
+            >
+              {isPremium ? (
+                <>
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Socio Pro</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Plan Free</span>
+                </>
+              )}
+            </Link>
+
+            <Link
               href="/dashboard/kanban"
               className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs font-semibold bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl transition-all"
             >
@@ -125,37 +146,21 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
-        {/* Banner de Suscripción */}
-        <div className="mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-3xl glass-card border border-slate-800 glow-primary">
-          <div className="flex items-start gap-4">
-            <div className={`p-3.5 rounded-2xl ${isPremium ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-900 text-slate-400'}`}>
-              {isPremium ? <Crown className="w-6 h-6 animate-pulse-subtle" /> : <CreditCard className="w-6 h-6" />}
+        {!isPremium && (
+          <div className="mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-3xl glass-card border border-slate-800 glow-primary">
+            <div className="flex items-start gap-4">
+              <div className="p-3.5 rounded-2xl bg-slate-900 text-slate-400 border border-slate-800/10">
+                <CreditCard className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  Hola, {session.user.name || 'Candidato'}
+                </h2>
+                <p className="text-slate-400 text-xs mt-1 font-light leading-relaxed max-w-xl">
+                  Estás en el Plan Gratuito. El motor de IA gratuito usa OpenRouter. Desbloquea plantillas profesionales e integraciones de IA avanzadas actualizando tu cuenta.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                Hola, {session.user.name || 'Candidato'}
-                {isPremium && (
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/35 text-amber-400">
-                    Socio Pro
-                  </span>
-                )}
-              </h2>
-              <p className="text-slate-400 text-xs mt-1 font-light leading-relaxed max-w-xl">
-                {isPremium
-                  ? 'Tienes acceso total e ilimitado a las 5 plantillas premium y optimización de CVs con el motor de IA oficial (DeepSeek o Gemini).'
-                  : 'Estás en el Plan Gratuito. El motor de IA gratuito usa OpenRouter. Desbloquea plantillas profesionales e integraciones de IA avanzadas actualizando tu cuenta.'}
-              </p>
-            </div>
-          </div>
-          {isPremium ? (
-            <a
-              href="/api/stripe/portal"
-              className="w-full md:w-auto bg-slate-900 border border-slate-700 hover:border-slate-600 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shrink-0 flex items-center justify-center gap-1.5"
-            >
-              <CreditCard className="w-4 h-4" />
-              Gestionar suscripción
-            </a>
-          ) : (
             <a
               href="/api/stripe/checkout"
               className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shadow-amber-500/15 shrink-0 flex items-center justify-center gap-1.5"
@@ -163,8 +168,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <Crown className="w-4 h-4" />
               Actualizar a Pro (10 €/mes)
             </a>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Panel de Estadísticas Rápidas */}
         {isPremium && (

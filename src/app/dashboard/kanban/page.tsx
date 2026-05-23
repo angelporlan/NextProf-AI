@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { cvs, users, jobOffers } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { Sparkles, LogOut, LayoutDashboard, Crown } from 'lucide-react';
+import { Sparkles, LogOut, LayoutDashboard, Crown, CreditCard } from 'lucide-react';
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import { isProSubscription } from '@/lib/subscription';
 
@@ -64,6 +64,27 @@ export default async function KanbanPage() {
 
           <div className="flex items-center gap-4">
             <Link
+              href="/dashboard/subscription"
+              className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
+                isPremium
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/20 shadow-md shadow-amber-500/5'
+                  : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+              }`}
+            >
+              {isPremium ? (
+                <>
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Socio Pro</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Plan Free</span>
+                </>
+              )}
+            </Link>
+
+            <Link
               href="/dashboard"
               className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs font-semibold bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl transition-all"
             >
@@ -83,27 +104,6 @@ export default async function KanbanPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
-        {/* Banner Premium si no es pro */}
-        {!isPremium && (
-          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl glass-card border border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl">
-                <Crown className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-white">Lleva tus postulaciones al siguiente nivel</h4>
-                <p className="text-xs text-slate-400 mt-0.5">Desbloquea optimizaciones por IA directas usando modelos DeepSeek o Gemini Oficiales.</p>
-              </div>
-            </div>
-            <a
-              href="/api/stripe/checkout"
-              className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-md shadow-amber-500/10 text-center flex items-center justify-center gap-1"
-            >
-              <Crown className="w-3.5 h-3.5" />
-              Ser Pro
-            </a>
-          </div>
-        )}
 
         {/* Tablero Kanban */}
         <KanbanBoard offers={offers} userCvs={userCvs} />
