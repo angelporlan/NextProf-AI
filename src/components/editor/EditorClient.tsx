@@ -15,9 +15,10 @@ import LinkNext from 'next/link';
 interface EditorClientProps {
   cv: CV;
   isPremium: boolean;
+  availablePrompts: { id: string; name: string; isActive: boolean }[];
 }
 
-export default function EditorClient({ cv, isPremium }: EditorClientProps) {
+export default function EditorClient({ cv, isPremium, availablePrompts }: EditorClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [pdfVersion, setPdfVersion] = useState(0);
@@ -40,6 +41,7 @@ export default function EditorClient({ cv, isPremium }: EditorClientProps) {
     url: '',
     platform: 'linkedin',
     jobDescription: '',
+    promptId: availablePrompts.find(p => p.isActive)?.id || '',
   });
 
   // Efecto para actualizar el PDF al guardar cambios de Markdown
@@ -144,6 +146,7 @@ export default function EditorClient({ cv, isPremium }: EditorClientProps) {
           url: aiFormData.url,
           platform: aiFormData.platform,
           jobDescription: aiFormData.jobDescription,
+          promptId: aiFormData.promptId,
         }),
       });
 
@@ -443,6 +446,25 @@ export default function EditorClient({ cv, isPremium }: EditorClientProps) {
                         <option value="other">Otra</option>
                       </select>
                     </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+                      Modo de Optimización (Prompt)
+                    </label>
+                    <select
+                      value={aiFormData.promptId}
+                      onChange={(e) => setAiFormData(prev => ({ ...prev, promptId: e.target.value }))}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 transition-all cursor-pointer"
+                    >
+                      <option value="">Por defecto (Configurado por el Administrador)</option>
+                      {availablePrompts.map((prompt) => (
+                        <option key={prompt.id} value={prompt.id}>
+                          {prompt.name} {prompt.isActive ? '(Predeterminado)' : ''}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="space-y-1.5">

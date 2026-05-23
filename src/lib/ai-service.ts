@@ -6,6 +6,7 @@ export interface OptimizeRequest {
   baseCvMarkdown: string;
   jobDescription: string;
   userSubscriptionStatus: string; // 'active' o 'none'
+  promptId?: string;
 }
 
 export class AIService {
@@ -29,26 +30,37 @@ export class AIService {
       .replace(/\{\{job\}\}/g, job);
   }
 
-  static async optimizeCV({ baseCvMarkdown, jobDescription, userSubscriptionStatus }: OptimizeRequest): Promise<string> {
+  static async optimizeCV({ baseCvMarkdown, jobDescription, userSubscriptionStatus, promptId }: OptimizeRequest): Promise<string> {
     const isPro = userSubscriptionStatus === 'active';
 
-    // 1. Cargar el prompt activo para 'optimize_cv' desde la DB si existe
+    // 1. Cargar el prompt activo o el seleccionado desde la DB si existe
     let systemPrompt: string | null = null;
     let userPromptTemplate: string | null = null;
 
     try {
-      const [dbPrompt] = await db
-        .select()
-        .from(prompts)
-        .where(and(eq(prompts.key, 'optimize_cv'), eq(prompts.isActive, true)))
-        .limit(1);
+      let dbPrompt;
+      if (promptId) {
+        // Cargar prompt específico seleccionado por el usuario
+        [dbPrompt] = await db
+          .select()
+          .from(prompts)
+          .where(eq(prompts.id, promptId))
+          .limit(1);
+      } else {
+        // Cargar el prompt activo por defecto
+        [dbPrompt] = await db
+          .select()
+          .from(prompts)
+          .where(and(eq(prompts.key, 'optimize_cv'), eq(prompts.isActive, true)))
+          .limit(1);
+      }
 
       if (dbPrompt) {
         systemPrompt = dbPrompt.systemPrompt;
         userPromptTemplate = dbPrompt.userPrompt;
       }
     } catch (err) {
-      console.error("[AIService] Error al obtener prompt activo de la DB:", err);
+      console.error("[AIService] Error al obtener prompt de la DB:", err);
     }
 
     if (!isPro) {

@@ -36,7 +36,8 @@ import {
   updateUserSubscription,
   getUserDetails,
   getAdminStats,
-  getAIConfig
+  getAIConfig,
+  togglePromptArchive
 } from './actions';
 
 interface AdminClientProps {
@@ -76,6 +77,7 @@ export default function AdminClient({
 
   // Prompt Form Modal State
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+  const [showArchived, setShowArchived] = useState(false); // Mostrar archivados en el listado
   const [promptForm, setPromptForm] = useState<{
     id?: string;
     name: string;
@@ -83,12 +85,14 @@ export default function AdminClient({
     systemPrompt: string;
     userPrompt: string;
     isActive: boolean;
+    isArchived: boolean;
   }>({
     name: '',
     key: 'optimize_cv',
     systemPrompt: '',
     userPrompt: '',
     isActive: false,
+    isArchived: false,
   });
 
   // IA Settings form state (local fields)
@@ -210,6 +214,17 @@ export default function AdminClient({
     }
   };
 
+  // Prompt Actions: Toggle Archive
+  const handleTogglePromptArchive = async (id: string, isArchived: boolean) => {
+    const res = await togglePromptArchive(id, isArchived);
+    if (res.success) {
+      showToast(isArchived ? 'Prompt archivado correctamente' : 'Prompt desarchivado correctamente');
+      setPromptsList(prev => prev.map(p => p.id === id ? { ...p, isArchived } : p));
+    } else {
+      showToast(res.error || 'Error al archivar prompt', 'error');
+    }
+  };
+
   // Prompt Actions: Delete
   const handleDeletePrompt = async (id: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar permanentemente este prompt?')) return;
@@ -244,6 +259,7 @@ export default function AdminClient({
       systemPrompt: 'Eres un redactor experto en CVs estilo Harvard...',
       userPrompt: 'CV Base:\n{{cv}}\n\nOferta de Trabajo:\n{{job}}',
       isActive: false,
+      isArchived: false,
     });
     setIsPromptModalOpen(true);
   };
@@ -257,6 +273,7 @@ export default function AdminClient({
       systemPrompt: prompt.systemPrompt,
       userPrompt: prompt.userPrompt,
       isActive: prompt.isActive,
+      isArchived: prompt.isArchived || false,
     });
     setIsPromptModalOpen(true);
   };
@@ -728,7 +745,6 @@ export default function AdminClient({
             </form>
           </div>
         )}
-
         {/* Tab: Prompts Management */}
         {activeTab === 'prompts' && (
           <div className="space-y-6 animate-fadeIn">
@@ -737,13 +753,25 @@ export default function AdminClient({
                 <h3 className="text-base font-bold text-white">Biblioteca de Prompts Dinámicos</h3>
                 <p className="text-slate-400 text-xs font-light mt-0.5">Define las directrices del sistema y plantillas de usuario que gobernarán las optimizaciones de IA.</p>
               </div>
-              <button
-                onClick={openCreatePromptModal}
-                className="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md shadow-sky-500/10 flex items-center justify-center gap-1.5 shrink-0"
-              >
-                <Plus className="w-4 h-4" />
-                Crear Nuevo Prompt
-              </button>
+              <div className="flex items-center gap-3.5 w-full sm:w-auto shrink-0">
+                <button
+                  onClick={() => setShowArchived(!showArchived)}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${
+                    showArchived
+                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {showArchived ? 'Ocultar Archivados' : 'Mostrar Archivados'}
+                </button>
+                <button
+                  onClick={openCreatePromptModal}
+                  className="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md shadow-sky-500/10 flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  Crear Nuevo Prompt
+                </button>
+              </div>
             </div>
 
             {promptsList.length === 0 ? (
@@ -764,13 +792,17 @@ export default function AdminClient({
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
-                {promptsList.map((prompt) => (
+                {promptsList
+                  .filter((p) => (showArchived ? true : !p.isArchived))
+                  .map((prompt) => (
                   <div
                     key={prompt.id}
                     className={`glass-card p-6 rounded-2xl border transition-all relative overflow-hidden group ${
                       prompt.isActive 
                         ? 'border-emerald-500/35 shadow-lg shadow-emerald-950/5' 
-                        : 'border-slate-800/80 hover:border-slate-700'
+                        : prompt.isArchived
+                          ? 'border-amber-950/20 opacity-60 hover:opacity-100'
+                          : 'border-slate-800/80 hover:border-slate-700'
                     }`}
                   >
                     {/* Glowing side accent for active prompt */}
@@ -784,11 +816,17 @@ export default function AdminClient({
                           <h4 className="font-bold text-white text-base">
                             {prompt.name}
                           </h4>
-                          {prompt.isActive ? (
+                          {prompt.isActive && (
                             <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md flex items-center gap-0.5">
                               <Check className="w-2.5 h-2.5" /> Activo
                             </span>
-                          ) : (
+                          )}
+                          {prompt.isArchived && (
+                            <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md">
+                              Archivado
+                            </span>
+                          )}
+                          {!prompt.isActive && !prompt.isArchived && (
                             <span className="bg-slate-900 text-slate-500 border border-slate-800/10 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md">
                               Inactivo
                             </span>
@@ -801,7 +839,7 @@ export default function AdminClient({
 
                       {/* Prompts actions toolbar */}
                       <div className="flex items-center gap-2 self-start">
-                        {!prompt.isActive && (
+                        {!prompt.isActive && !prompt.isArchived && (
                           <button
                             onClick={() => handleTogglePromptActive(prompt.id, prompt.key)}
                             className="bg-slate-900 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 font-semibold px-3 py-1.5 rounded-lg text-[10px] border border-slate-800 hover:border-slate-700 transition-colors"
@@ -809,6 +847,18 @@ export default function AdminClient({
                             Activar
                           </button>
                         )}
+                        <button
+                          onClick={() => handleTogglePromptArchive(prompt.id, !prompt.isArchived)}
+                          className={`bg-slate-900 font-semibold px-3 py-1.5 rounded-lg text-[10px] border transition-colors ${
+                            prompt.isArchived
+                              ? 'text-amber-400 hover:text-amber-300 border-slate-800 hover:border-slate-755'
+                              : 'text-slate-400 hover:text-white border-slate-800 hover:border-slate-700'
+                          }`}
+                          disabled={prompt.isActive}
+                          title={prompt.isActive ? "No puedes archivar un prompt activo" : ""}
+                        >
+                          {prompt.isArchived ? 'Desarchivar' : 'Archivar'}
+                        </button>
                         <button
                           onClick={() => openEditPromptModal(prompt)}
                           className="bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white p-2 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors"
@@ -1137,18 +1187,34 @@ export default function AdminClient({
                   </span>
                 </div>
 
-                {/* Is Active */}
-                <div className="flex items-center gap-2 pt-2">
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    checked={promptForm.isActive}
-                    onChange={(e) => setPromptForm(prev => ({ ...prev, isActive: e.target.checked }))}
-                    className="rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-sky-500/20 w-4 h-4 cursor-pointer"
-                  />
-                  <label htmlFor="isActive" className="text-xs font-semibold text-slate-300 cursor-pointer select-none">
-                    Activar inmediatamente (esto desactivará cualquier otro prompt para la función &quot;{promptForm.key}&quot;)
-                  </label>
+                {/* Is Active & Is Archived */}
+                <div className="flex flex-col gap-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={promptForm.isActive}
+                      onChange={(e) => setPromptForm(prev => ({ ...prev, isActive: e.target.checked, isArchived: e.target.checked ? false : prev.isArchived }))}
+                      className="rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-sky-500/20 w-4 h-4 cursor-pointer"
+                    />
+                    <label htmlFor="isActive" className="text-xs font-semibold text-slate-300 cursor-pointer select-none">
+                      Activar inmediatamente (esto desactivará cualquier otro prompt para la función &quot;{promptForm.key}&quot;)
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="isArchived"
+                      checked={promptForm.isArchived}
+                      disabled={promptForm.isActive}
+                      onChange={(e) => setPromptForm(prev => ({ ...prev, isArchived: e.target.checked }))}
+                      className="rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-sky-500/20 w-4 h-4 cursor-pointer disabled:opacity-50"
+                    />
+                    <label htmlFor="isArchived" className="text-xs font-semibold text-slate-300 cursor-pointer select-none">
+                      Archivar prompt (no se mostrará a los usuarios durante la optimización)
+                    </label>
+                  </div>
                 </div>
               </div>
 

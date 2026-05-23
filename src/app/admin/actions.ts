@@ -153,6 +153,7 @@ export async function savePrompt(data: {
   systemPrompt: string;
   userPrompt: string;
   isActive: boolean;
+  isArchived?: boolean;
 }) {
   await verifyAdmin();
 
@@ -163,6 +164,7 @@ export async function savePrompt(data: {
   try {
     const isCreating = !data.id;
     const now = new Date();
+    const isArchivedVal = data.isArchived ?? false;
 
     let targetId = data.id;
 
@@ -175,6 +177,7 @@ export async function savePrompt(data: {
           systemPrompt: data.systemPrompt,
           userPrompt: data.userPrompt,
           isActive: data.isActive,
+          isArchived: isArchivedVal,
           createdAt: now,
           updatedAt: now,
         })
@@ -189,6 +192,7 @@ export async function savePrompt(data: {
           systemPrompt: data.systemPrompt,
           userPrompt: data.userPrompt,
           isActive: data.isActive,
+          isArchived: isArchivedVal,
           updatedAt: now,
         })
         .where(eq(prompts.id, data.id!));
@@ -295,6 +299,32 @@ export async function updateUserSubscription(userId: string, status: string) {
     return { success: true };
   } catch (error: any) {
     console.error(`Error al actualizar suscripción de usuario ${userId}:`, error);
+    return { success: false, error: error.message };
+  }
+}
+
+// 10. Archivar / Desarchivar un Prompt
+export async function togglePromptArchive(id: string, isArchived: boolean) {
+  await verifyAdmin();
+
+  try {
+    // Si se va a archivar y es el activo, dar error
+    if (isArchived) {
+      const [prompt] = await db.select().from(prompts).where(eq(prompts.id, id)).limit(1);
+      if (prompt?.isActive) {
+        return { success: false, error: 'No puedes archivar el prompt que está actualmente activo. Desactívalo primero.' };
+      }
+    }
+
+    await db
+      .update(prompts)
+      .set({ isArchived, updatedAt: new Date() })
+      .where(eq(prompts.id, id));
+
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error al archivar/desarchivar el prompt:', error);
     return { success: false, error: error.message };
   }
 }

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const userId = session.user.id;
     const body = await req.json();
-    const { baseCvId, jobTitle, company, url, platform, jobDescription } = body;
+    const { baseCvId, jobTitle, company, url, platform, jobDescription, promptId } = body;
 
     if (!baseCvId || !jobTitle || !company || !jobDescription) {
       return new NextResponse('Missing required fields', { status: 400 });
@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
     const optimizedContent = await AIService.optimizeCV({
       baseCvMarkdown: baseCv.content,
       jobDescription: jobDescription,
-      userSubscriptionStatus: user.subscriptionStatus
+      userSubscriptionStatus: user.subscriptionStatus,
+      promptId: promptId
     });
 
     // 4. Guardar CV Optimizado

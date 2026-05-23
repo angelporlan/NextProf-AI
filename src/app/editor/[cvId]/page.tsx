@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { db } from '@/db';
-import { cvs, users } from '@/db/schema';
+import { cvs, users, prompts } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import EditorClient from '@/components/editor/EditorClient';
 import { isProSubscription } from '@/lib/subscription';
@@ -43,7 +43,23 @@ export default async function EditorPage({ params }: EditorPageProps) {
   const subscriptionStatus = dbUser?.subscriptionStatus || 'none';
   const isPremium = isProSubscription(subscriptionStatus);
 
-  return <EditorClient cv={cv} isPremium={isPremium} />;
+  // 3. Obtener prompts no archivados para optimización de CV
+  const availablePrompts = await db
+    .select({
+      id: prompts.id,
+      name: prompts.name,
+      isActive: prompts.isActive,
+    })
+    .from(prompts)
+    .where(
+      and(
+        eq(prompts.key, 'optimize_cv'),
+        eq(prompts.isArchived, false)
+      )
+    )
+    .orderBy(prompts.name);
+
+  return <EditorClient cv={cv} isPremium={isPremium} availablePrompts={availablePrompts || []} />;
 }
 
 export const dynamic = 'force-dynamic';
