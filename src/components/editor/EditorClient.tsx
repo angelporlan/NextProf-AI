@@ -207,7 +207,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsAiOpen(true)}
-            className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-white font-bold text-xs shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all transform hover:-translate-y-0.5"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-white font-bold text-xs shadow-lg shadow-sky-500/10 hover:shadow-sky-500/20 transition-all transform hover:-translate-y-0.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             Optimizar con IA
