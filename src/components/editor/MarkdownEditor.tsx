@@ -3,12 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveCvContent } from '@/app/dashboard/actions';
 import {
-  FileEdit, Bold, Italic, List, Heading1, Heading2, Heading3, Eraser, Code, Eye
+  FileEdit, Bold, Italic, List, Heading1, Heading2, Heading3, Eraser, Code, Eye,
+  GitCompare, Columns
 } from 'lucide-react';
+import { computeDiff, DiffLine } from '@/lib/diff';
 
 interface MarkdownEditorProps {
   cvId: string;
   initialContent: string;
+  originalContent?: string;
   onSave?: () => void;
   saveStatus: 'saved' | 'saving' | 'error';
   setSaveStatus: (status: 'saved' | 'saving' | 'error') => void;
@@ -257,10 +260,18 @@ function htmlToMd(html: string): string {
   return cleaned;
 }
 
-export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatus, setSaveStatus }: MarkdownEditorProps) {
+export default function MarkdownEditor({ cvId, initialContent, originalContent, onSave, saveStatus, setSaveStatus }: MarkdownEditorProps) {
   const [content, setContent] = useState(initialContent);
-  const [mode, setMode] = useState<'visual' | 'markdown'>('visual');
+  const [mode, setMode] = useState<'visual' | 'markdown' | 'diff'>('visual');
+  const [diffView, setDiffView] = useState<'unified' | 'split'>('unified');
+  const [diffLines, setDiffLines] = useState<DiffLine[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (originalContent) {
+      setDiffLines(computeDiff(originalContent, content));
+    }
+  }, [originalContent, content]);
   
   // Refs for Markdown editor sync scroll
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -320,9 +331,16 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
     }
   };
 
-  // Switch between visual and markdown mode
-  const handleModeChange = (newMode: 'visual' | 'markdown') => {
+  // Switch between visual, markdown and diff mode
+  const handleModeChange = (newMode: 'visual' | 'markdown' | 'diff') => {
     if (newMode === mode) return;
+
+    // If leaving visual mode, sync current visual content to markdown first
+    if (mode === 'visual' && editableRef.current) {
+      const html = editableRef.current.innerHTML;
+      const md = htmlToMd(html);
+      setContent(md);
+    }
 
     if (newMode === 'visual') {
       setMode('visual');
@@ -332,12 +350,7 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
         }
       }, 0);
     } else {
-      if (editableRef.current) {
-        const html = editableRef.current.innerHTML;
-        const md = htmlToMd(html);
-        setContent(md);
-      }
-      setMode('markdown');
+      setMode(newMode);
     }
   };
 
@@ -405,8 +418,57 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
             <Code className="w-3 h-3" />
             Markdown
           </button>
+          {originalContent && (
+            <button
+              type="button"
+              onClick={() => handleModeChange('diff')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'diff' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              <GitCompare className="w-3.5 h-3.5" />
+              Cambios
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Diff Mode Toolbar */}
+      {mode === 'diff' && (
+        <div className="flex flex-wrap items-center justify-between px-6 py-2 bg-[#0b101c]/70 border-b border-slate-900 shrink-0 select-none z-10 gap-3">
+          {/* Change Stats */}
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              Análisis IA:
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 text-[10px] font-bold">
+                +{diffLines.filter(l => l.type === 'added').length}
+              </span>
+              <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-455 border border-rose-500/20 text-[10px] font-bold">
+                -{diffLines.filter(l => l.type === 'removed').length}
+              </span>
+            </div>
+          </div>
+
+          {/* Toggle Diff View */}
+          <div className="flex bg-[#090d16] p-0.5 rounded-xl border border-slate-800/80">
+            <button
+              type="button"
+              onClick={() => setDiffView('unified')}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[9px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${diffView === 'unified' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              Unificada
+            </button>
+            <button
+              type="button"
+              onClick={() => setDiffView('split')}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[9px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${diffView === 'split' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              <Columns className="w-2.5 h-2.5" />
+              Dividida
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Visual Editor Toolbar */}
       {mode === 'visual' && (
@@ -543,7 +605,7 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
       <div className="flex-1 relative bg-[#090d16]/40 overflow-hidden">
         
         {/* Visual WYSIWYG Mode */}
-        {mode === 'visual' ? (
+        {mode === 'visual' && (
           <div className="absolute inset-0 p-6 overflow-auto editor-scrollbar">
             <div
               ref={editableRef}
@@ -563,8 +625,10 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
               style={{ outline: 'none' }}
             />
           </div>
-        ) : (
-          /* Classical Markdown Mode */
+        )}
+
+        {/* Classical Markdown Mode */}
+        {mode === 'markdown' && (
           <>
             {/* Highlighted text layer underneath */}
             <div
@@ -584,6 +648,119 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
               spellCheck="false"
             />
           </>
+        )}
+
+        {/* Diff Comparador Mode */}
+        {mode === 'diff' && (
+          <div className="absolute inset-0 p-6 overflow-auto editor-scrollbar font-mono text-xs leading-relaxed">
+            {diffView === 'unified' ? (
+              /* Unified In-line Diff */
+              <div className="min-w-full flex flex-col rounded-xl overflow-hidden border border-slate-900 bg-[#070b13]/80">
+                {diffLines.map((line, idx) => {
+                  const isAdded = line.type === 'added';
+                  const isRemoved = line.type === 'removed';
+                  const bgClass = isAdded 
+                    ? 'bg-emerald-950/20 text-emerald-300/90 border-l-2 border-emerald-500/80' 
+                    : isRemoved 
+                      ? 'bg-rose-950/20 text-rose-300/85 border-l-2 border-rose-500/80 line-through decoration-rose-500/50' 
+                      : 'text-slate-400 hover:bg-slate-900/10 border-l-2 border-transparent';
+                  
+                  return (
+                    <div key={idx} className={`flex w-full min-h-[22px] items-start ${bgClass}`}>
+                      {/* Line Numbers */}
+                      <div className="w-10 select-none text-[9px] text-slate-600 text-right pr-2 py-0.5 border-r border-slate-900/40 shrink-0">
+                        {line.oldLineNumber || ''}
+                      </div>
+                      <div className="w-10 select-none text-[9px] text-slate-600 text-right pr-2 py-0.5 border-r border-slate-900/40 shrink-0">
+                        {line.newLineNumber || ''}
+                      </div>
+                      {/* Diff Sign */}
+                      <div className={`w-6 select-none text-center font-bold py-0.5 shrink-0 ${isAdded ? 'text-emerald-450' : isRemoved ? 'text-rose-455' : 'text-slate-700'}`}>
+                        {isAdded ? '+' : isRemoved ? '-' : ' '}
+                      </div>
+                      {/* Line Content */}
+                      <div className="flex-1 min-w-0 px-3 py-0.5 whitespace-pre-wrap break-words select-text">
+                        {line.value || ' '}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* Split Side-by-side Diff */
+              <div className="min-w-full flex gap-4 h-full">
+                {/* Left Side: Before (CV Base) */}
+                <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-slate-900 bg-[#070b13]/80 h-full overflow-y-auto">
+                  <div className="sticky top-0 bg-[#0c1220] border-b border-slate-900 px-4 py-2 text-[10px] font-bold text-rose-400/90 flex items-center gap-1.5 z-10 uppercase select-none">
+                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    Antes (CV Base Original)
+                  </div>
+                  <div className="flex-1 p-2 font-mono text-xs">
+                    {diffLines.map((line, idx) => {
+                      if (line.type === 'added') {
+                        // Place-holder to keep alignment
+                        return (
+                          <div key={idx} className="flex w-full min-h-[22px] bg-[#03060d]/20 text-transparent select-none border-l-2 border-transparent">
+                            <div className="w-10 border-r border-slate-900/20 shrink-0" />
+                            <div className="flex-1 py-0.5 px-3 pointer-events-none">
+                              &nbsp;
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      const isRemoved = line.type === 'removed';
+                      return (
+                        <div key={idx} className={`flex w-full min-h-[22px] items-start ${isRemoved ? 'bg-rose-950/20 text-rose-300/85 border-l-2 border-rose-500/80 line-through decoration-rose-500/50' : 'text-slate-400 border-l-2 border-transparent'}`}>
+                          <div className="w-10 select-none text-[9px] text-slate-600 text-right pr-2 py-0.5 border-r border-slate-900/40 shrink-0">
+                            {line.oldLineNumber || ''}
+                          </div>
+                          <div className="flex-1 min-w-0 px-3 py-0.5 whitespace-pre-wrap break-words select-text">
+                            {line.value || ' '}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Side: After (IA Optimizado) */}
+                <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-slate-900 bg-[#070b13]/80 h-full overflow-y-auto">
+                  <div className="sticky top-0 bg-[#0c1220] border-b border-slate-900 px-4 py-2 text-[10px] font-bold text-emerald-450 flex items-center gap-1.5 z-10 uppercase select-none">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Después (Optimizado por IA)
+                  </div>
+                  <div className="flex-1 p-2 font-mono text-xs">
+                    {diffLines.map((line, idx) => {
+                      if (line.type === 'removed') {
+                        // Place-holder to keep alignment
+                        return (
+                          <div key={idx} className="flex w-full min-h-[22px] bg-[#03060d]/20 text-transparent select-none border-l-2 border-transparent">
+                            <div className="w-10 border-r border-slate-900/20 shrink-0" />
+                            <div className="flex-1 py-0.5 px-3 pointer-events-none">
+                              &nbsp;
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      const isAdded = line.type === 'added';
+                      return (
+                        <div key={idx} className={`flex w-full min-h-[22px] items-start ${isAdded ? 'bg-emerald-950/20 text-emerald-300/90 border-l-2 border-emerald-500/80' : 'text-slate-400 border-l-2 border-transparent'}`}>
+                          <div className="w-10 select-none text-[9px] text-slate-600 text-right pr-2 py-0.5 border-r border-slate-900/40 shrink-0">
+                            {line.newLineNumber || ''}
+                          </div>
+                          <div className="flex-1 min-w-0 px-3 py-0.5 whitespace-pre-wrap break-words select-text">
+                            {line.value || ' '}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

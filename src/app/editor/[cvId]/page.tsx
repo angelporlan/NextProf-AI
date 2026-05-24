@@ -33,6 +33,38 @@ export default async function EditorPage({ params }: EditorPageProps) {
     redirect('/dashboard');
   }
 
+  // 1b. Obtener el currículum base para comparación "Antes y Después"
+  let baseCvContent: string | null = null;
+  if (!cv.isBase) {
+    const [principalBase] = await db
+      .select()
+      .from(cvs)
+      .where(
+        and(
+          eq(cvs.userId, userId),
+          eq(cvs.isBase, true),
+          eq(cvs.isPrincipal, true)
+        )
+      )
+      .limit(1);
+
+    if (principalBase) {
+      baseCvContent = principalBase.content;
+    } else {
+      const [anyBase] = await db
+        .select()
+        .from(cvs)
+        .where(
+          and(
+            eq(cvs.userId, userId),
+            eq(cvs.isBase, true)
+          )
+        )
+        .limit(1);
+      baseCvContent = anyBase?.content || null;
+    }
+  }
+
   // 2. Obtener información actualizada de suscripción del usuario
   const [dbUser] = await db
     .select()
@@ -59,7 +91,14 @@ export default async function EditorPage({ params }: EditorPageProps) {
     )
     .orderBy(prompts.name);
 
-  return <EditorClient cv={cv} isPremium={isPremium} availablePrompts={availablePrompts || []} />;
+  return (
+    <EditorClient
+      cv={cv}
+      isPremium={isPremium}
+      availablePrompts={availablePrompts || []}
+      baseCvContent={baseCvContent}
+    />
+  );
 }
 
 export const dynamic = 'force-dynamic';

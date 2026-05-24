@@ -18,9 +18,10 @@ interface EditorClientProps {
   cv: CV;
   isPremium: boolean;
   availablePrompts: { id: string; name: string; isActive: boolean }[];
+  baseCvContent?: string | null;
 }
 
-export default function EditorClient({ cv, isPremium, availablePrompts }: EditorClientProps) {
+export default function EditorClient({ cv, isPremium, availablePrompts, baseCvContent }: EditorClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [pdfVersion, setPdfVersion] = useState(0);
@@ -392,6 +393,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts }: Editor
           <MarkdownEditor
             cvId={cv.id}
             initialContent={cv.content}
+            originalContent={baseCvContent || undefined}
             onSave={handleEditorSave}
             saveStatus={saveStatus}
             setSaveStatus={setSaveStatus}
