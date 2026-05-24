@@ -411,87 +411,131 @@ export default function MarkdownEditor({ cvId, initialContent, onSave, saveStatu
       {/* Visual Editor Toolbar */}
       {mode === 'visual' && (
         <div className="flex items-center gap-1 px-6 py-2 bg-[#0b101c]/70 border-b border-slate-900 shrink-0 overflow-x-auto select-none z-10 scrollbar-none">
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('bold')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
-            title="Negrita"
-          >
-            <Bold className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('italic')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
-            title="Cursiva"
-          >
-            <Italic className="w-3.5 h-3.5" />
-          </button>
+          {/* Bold Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('bold')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
+            >
+              <Bold className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Negrita
+            </div>
+          </div>
+
+          {/* Italic Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('italic')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
+            >
+              <Italic className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Cursiva
+            </div>
+          </div>
           
           <div className="w-px h-4 bg-slate-800 mx-1 shrink-0" />
 
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('insertUnorderedList')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
-            title="Lista de viñetas"
-          >
-            <List className="w-3.5 h-3.5" />
-          </button>
+          {/* List Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('insertUnorderedList')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
+            >
+              <List className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Viñetas
+            </div>
+          </div>
 
           <div className="w-px h-4 bg-slate-800 mx-1 shrink-0" />
 
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('formatBlock', 'H1')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
-            title="Título Principal"
-          >
-            <Heading1 className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('formatBlock', 'H2')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
-            title="Título de Sección"
-          >
-            <Heading2 className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('formatBlock', 'H3')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
-            title="Subtítulo"
-          >
-            <Heading3 className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('formatBlock', 'P')}
-            className="px-2 py-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-[10px] tracking-wider uppercase shrink-0"
-            title="Texto Normal"
-          >
-            Párrafo
-          </button>
+          {/* H1 Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('formatBlock', 'H1')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
+            >
+              <Heading1 className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Título 1
+            </div>
+          </div>
+
+          {/* H2 Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('formatBlock', 'H2')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
+            >
+              <Heading2 className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Título 2
+            </div>
+          </div>
+
+          {/* H3 Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('formatBlock', 'H3')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-xs shrink-0 flex items-center gap-0.5"
+            >
+              <Heading3 className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Título 3
+            </div>
+          </div>
+
+          {/* Paragraph Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('formatBlock', 'P')}
+              className="px-2 py-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-[10px] tracking-wider uppercase shrink-0"
+            >
+              Párrafo
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Texto Normal
+            </div>
+          </div>
 
           <div className="w-px h-4 bg-slate-800 mx-1 shrink-0" />
 
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => applyStyle('removeFormat')}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
-            title="Limpiar Formato"
-          >
-            <Eraser className="w-3.5 h-3.5" />
-          </button>
+          {/* Eraser Button */}
+          <div className="relative group">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => applyStyle('removeFormat')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer shrink-0"
+            >
+              <Eraser className="w-3.5 h-3.5" />
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20">
+              Limpiar Formato
+            </div>
+          </div>
         </div>
       )}
 
