@@ -6,6 +6,24 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
+const ARCHIVED_STATUS_PREFIX = "archived:";
+const VALID_PIPELINE_STATUSES = ["interested", "applied", "interview", "offer", "rejected"] as const;
+type PipelineStatus = typeof VALID_PIPELINE_STATUSES[number];
+
+function getValidPipelineStatus(status: string | null | undefined): PipelineStatus {
+  return VALID_PIPELINE_STATUSES.includes(status as PipelineStatus)
+    ? (status as PipelineStatus)
+    : "interested";
+}
+
+function getRestoreStatus(status: string): PipelineStatus {
+  if (!status.startsWith(ARCHIVED_STATUS_PREFIX)) {
+    return getValidPipelineStatus(status);
+  }
+
+  return getValidPipelineStatus(status.slice(ARCHIVED_STATUS_PREFIX.length));
+}
+
 export async function updateJobOfferStatus(offerId: string, newStatus: string) {
   try {
     const session = await auth();
@@ -36,6 +54,82 @@ export async function updateJobOfferStatus(offerId: string, newStatus: string) {
   } catch (error: any) {
     console.error("Error updating offer status:", error);
     return { error: error.message || "Failed to update status" };
+  }
+}
+
+export async function archiveJobOffer(offerId: string) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    const [offer] = await db
+      .select()
+      .from(jobOffers)
+      .where(eq(jobOffers.id, offerId))
+      .limit(1);
+
+    if (!offer || offer.userId !== session.user.id) {
+      throw new Error("Forbidden or Offer not found");
+    }
+
+    if (offer.status.startsWith(ARCHIVED_STATUS_PREFIX)) {
+      return { success: true };
+    }
+
+    const previousStatus = getValidPipelineStatus(offer.status);
+
+    await db
+      .update(jobOffers)
+      .set({
+        status: `${ARCHIVED_STATUS_PREFIX}${previousStatus}`,
+        updatedAt: new Date()
+      })
+      .where(eq(jobOffers.id, offerId));
+
+    revalidatePath("/dashboard/kanban");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error archiving offer:", error);
+    return { error: error.message || "Failed to archive offer" };
+  }
+}
+
+export async function restoreArchivedJobOffer(offerId: string) {
+  try {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    const [offer] = await db
+      .select()
+      .from(jobOffers)
+      .where(eq(jobOffers.id, offerId))
+      .limit(1);
+
+    if (!offer || offer.userId !== session.user.id) {
+      throw new Error("Forbidden or Offer not found");
+    }
+
+    const restoredStatus = getRestoreStatus(offer.status);
+
+    await db
+      .update(jobOffers)
+      .set({
+        status: restoredStatus,
+        updatedAt: new Date()
+      })
+      .where(eq(jobOffers.id, offerId));
+
+    revalidatePath("/dashboard/kanban");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error restoring archived offer:", error);
+    return { error: error.message || "Failed to restore offer" };
   }
 }
 
