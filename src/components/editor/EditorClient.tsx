@@ -97,6 +97,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
     platform: 'linkedin',
     jobDescription: '',
     promptId: availablePrompts.find(p => p.isActive)?.id || '',
+    addToKanban: 'true',
   });
 
   // Resizer Split Screen states
@@ -258,6 +259,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           platform: aiFormData.platform,
           jobDescription: aiFormData.jobDescription,
           promptId: aiFormData.promptId,
+          addToKanban: aiFormData.addToKanban === 'true',
         }),
       });
 
@@ -598,6 +600,25 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                         <option value="indeed">Indeed</option>
                         <option value="other">Otra</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+                    <input
+                      type="checkbox"
+                      id="addToKanban"
+                      checked={aiFormData.addToKanban === 'true'}
+                      onChange={(e) => setAiFormData(prev => ({ ...prev, addToKanban: e.target.checked ? 'true' : 'false' }))}
+                      className="rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-sky-500/20 w-4 h-4 cursor-pointer accent-sky-500"
+                    />
+                    <div className="flex flex-col">
+                      <label htmlFor="addToKanban" className="text-xs font-bold text-slate-300 cursor-pointer select-none flex items-center gap-1.5">
+                        <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+                        Registrar automáticamente en el Kanban
+                      </label>
+                      <span className="text-[10px] text-slate-400 font-light mt-0.5">
+                        Si está activado, creará una nueva candidatura vinculada a esta oferta en tu tablero Kanban.
+                      </span>
                     </div>
                   </div>
 
