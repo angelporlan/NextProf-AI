@@ -5,13 +5,12 @@ import { useRouter } from 'next/navigation';
 import { JobOffer, CV } from '@/db/schema';
 import { 
   updateJobOfferDetails, 
-  updateJobOfferCv,
-  updateJobOfferStatus 
+  updateJobOfferCv
 } from '@/app/dashboard/kanban/actions';
 import { 
   X, ExternalLink, Calendar, Briefcase, Building2, Link2, 
   FileText, CheckCircle2, Bookmark, Send, PartyPopper, Ban, 
-  Edit3, Save, Loader2, Sparkles, Clock 
+  Edit3, Save, Loader2, Sparkles, Clock, Archive
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
@@ -118,6 +117,14 @@ export default function JobOfferDetailsModal({
 
   // Obtener estilo e icono del estado
   const getStatusConfig = (status: string) => {
+    if (status.startsWith('archived:')) {
+      return {
+        title: 'Archivado',
+        style: 'text-amber-300 bg-amber-500/10 border-amber-500/20',
+        icon: <Archive className="w-3.5 h-3.5" />,
+      };
+    }
+
     switch (status) {
       case 'interested':
         return {
