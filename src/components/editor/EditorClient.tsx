@@ -646,7 +646,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                             <div
                               key={prompt.id}
                               onClick={() => setAiFormData(prev => ({ ...prev, promptId: prompt.id }))}
-                              className={`relative p-3.5 rounded-xl border bg-[#050812]/80 cursor-pointer transition-all duration-200 group flex flex-col justify-between min-h-[120px] select-none hover:-translate-y-0.5 ${config.hoverBg} ${isSelected ? `${config.activeBorder} shadow-lg ${shadowClass}` : 'border-slate-800 hover:border-slate-700'}`}
+                              className={`relative p-3.5 rounded-xl border bg-[#050812]/80 cursor-pointer transition-all duration-200 group flex flex-col justify-between select-none hover:-translate-y-0.5 ${config.hoverBg} ${isSelected ? `${config.activeBorder} shadow-lg ${shadowClass}` : 'border-slate-800 hover:border-slate-700'}`}
                               title={config.desc}
                             >
                               <div>
@@ -668,7 +668,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                               </div>
 
                               {/* Description / Summary */}
-                              <p className="text-[9.5px] text-slate-450 leading-normal font-light line-clamp-3">
+                              <p className="text-[9.5px] text-slate-450 leading-normal font-light">
                                 {config.desc}
                               </p>
 
