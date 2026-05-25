@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { JobOffer, CV } from '@/db/schema';
-import { updateJobOfferStatus, updateJobOfferCv, deleteJobOffer } from '@/app/dashboard/kanban/actions';
-import { ExternalLink, Trash2, ArrowLeft, ArrowRight, Link as LinkIcon } from 'lucide-react';
+import { updateJobOfferStatus, updateJobOfferCv, deleteJobOffer, archiveJobOffer } from '@/app/dashboard/kanban/actions';
+import { ExternalLink, Trash2, ArrowLeft, ArrowRight, Link as LinkIcon, Archive } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import AlertModal from '../ui/AlertModal';
 interface KanbanCardProps {
@@ -57,6 +57,15 @@ export default function KanbanCard({ offer, userCvs, onOpenDetails, density = 'c
 
   const handleDelete = () => {
     setIsDeleteModalOpen(true);
+  };
+
+  const handleArchive = async () => {
+    setLoading(true);
+    const result = await archiveJobOffer(offer.id);
+    if (result.success) {
+      router.refresh();
+    }
+    setLoading(false);
   };
 
   const confirmDelete = async () => {
@@ -140,6 +149,17 @@ export default function KanbanCard({ offer, userCvs, onOpenDetails, density = 'c
       {/* Controles de cambio de estado y eliminación */}
       <div className={`flex items-center justify-between border-t border-slate-800/80 ${isCompact ? 'pt-2' : 'pt-3'}`}>
         <div className="flex items-center gap-2 min-w-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleArchive();
+            }}
+            className="text-slate-500 hover:text-amber-300 p-1.5 rounded-lg transition-colors shrink-0"
+            title="Archivar candidatura"
+            aria-label="Archivar candidatura"
+          >
+            <Archive className="w-3.5 h-3.5" />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
