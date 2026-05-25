@@ -223,10 +223,10 @@ export default function JobOfferDetailsModal({
         {!loading && (
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-900/60 border border-transparent hover:border-slate-800/60 transition-all z-10"
+            className="absolute top-6 right-6 md:top-8 md:right-8 text-slate-450 hover:text-white p-2 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-850 hover:border-slate-700 flex items-center justify-center transition-all z-50 shadow-md hover:shadow-black/20"
             title="Cerrar"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         )}
 
@@ -235,7 +235,7 @@ export default function JobOfferDetailsModal({
           
           {/* Alerta de Error */}
           {error && (
-            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl font-medium">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl font-medium pr-12 md:pr-16">
               {error}
             </div>
           )}
@@ -244,7 +244,7 @@ export default function JobOfferDetailsModal({
             /* ================= MODO VISTA ================= */
             <>
               {/* Header */}
-              <div className="space-y-3">
+              <div className="space-y-3 pr-12 md:pr-16">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${platformStyle.badge}`}>
                     {offer.platform}
@@ -394,9 +394,9 @@ export default function JobOfferDetailsModal({
           ) : (
             /* ================= MODO EDICIÓN ================= */
             <form onSubmit={handleSave} className="space-y-5">
-              <div className="space-y-1">
+              <div className="space-y-1 pr-12 md:pr-16">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Edit3 className="w-5 h-5 text-sky-400" />
+                  <Edit3 className="w-4.5 h-4.5 text-sky-400" />
                   Editar Candidatura
                 </h3>
                 <p className="text-xs text-slate-400">
