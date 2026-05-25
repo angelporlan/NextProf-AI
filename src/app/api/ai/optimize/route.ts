@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const userId = session.user.id;
     const body = await req.json();
-    const { baseCvId, jobTitle, company, url, platform, jobDescription, promptId } = body;
+    const { baseCvId, jobTitle, company, url, platform, jobDescription, promptId, addToKanban = true } = body;
 
     if (!baseCvId || !jobTitle || !company || !jobDescription) {
       return new NextResponse('Missing required fields', { status: 400 });
@@ -71,16 +71,18 @@ export async function POST(req: NextRequest) {
       .returning();
 
     // 5. Guardar Candidatura en Kanban
-    await db.insert(jobOffers).values({
-      userId: userId,
-      cvId: optimizedCv.id,
-      title: jobTitle,
-      company: company,
-      url: url || null,
-      platform: platform || 'other',
-      description: jobDescription,
-      status: 'interested'
-    });
+    if (addToKanban) {
+      await db.insert(jobOffers).values({
+        userId: userId,
+        cvId: optimizedCv.id,
+        title: jobTitle,
+        company: company,
+        url: url || null,
+        platform: platform || 'other',
+        description: jobDescription,
+        status: 'interested'
+      });
+    }
 
     return NextResponse.json({
       success: true,
