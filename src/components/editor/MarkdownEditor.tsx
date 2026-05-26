@@ -397,7 +397,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
           <div className="p-1.5 bg-sky-500/10 text-sky-400 rounded-lg">
             <FileEdit className="w-4 h-4" />
           </div>
-          <span className="text-xs font-bold text-slate-350 tracking-wide uppercase">Contenido</span>
+          <span className="text-xs font-bold text-slate-300 tracking-wide uppercase">Contenido</span>
         </div>
 
         {/* Toggle Mode Switch */}
@@ -612,7 +612,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               contentEditable
               onInput={handleVisualInput}
               className="w-full min-h-full bg-transparent text-slate-300 font-sans text-sm leading-relaxed focus:outline-none select-text
-                empty:before:content-[attr(placeholder)] empty:before:text-slate-650 empty:before:pointer-events-none empty:before:block
+                empty:before:content-[attr(data-placeholder)] empty:before:text-slate-600 empty:before:pointer-events-none empty:before:block
                 [&_h1]:text-purple-300 [&_h1]:text-2xl [&_h1]:font-extrabold [&_h1]:mt-6 [&_h1]:mb-3 [&_h1]:tracking-tight [&_h1]:border-b [&_h1]:border-slate-800/60 [&_h1]:pb-1
                 [&_h2]:text-purple-400 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-2 [&_h2]:tracking-wide
                 [&_h3]:text-purple-400 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-1.5
@@ -621,7 +621,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                 [&_li]:text-slate-300 [&_li]:leading-normal
                 [&_strong]:text-white [&_strong]:font-bold
                 [&_em]:text-slate-400 [&_em]:italic"
-              placeholder="Escribe el contenido de tu CV aquí..."
+              data-placeholder="Escribe el contenido de tu CV aquí..."
               style={{ outline: 'none' }}
             />
           </div>
