@@ -6,6 +6,7 @@ node_modules
 # Testing
 /coverage
 /notes.md
+/desing_notes.md
 
 # Next.js build output
 /.next/
