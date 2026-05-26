@@ -318,55 +318,17 @@ export default function AdminClient({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] relative text-[#1E1B4B] overflow-x-hidden font-sans">
+    <div className="relative text-[#1E1B4B] dark:text-[#F3F4F6] overflow-x-hidden font-sans">
       {/* Glow effects background */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#8B5CF6]/5 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[5%] left-[-15%] w-[45%] h-[45%] rounded-full bg-[#8B5CF6]/3 blur-[120px] pointer-events-none" />
-
-      {/* Main Nav */}
-      <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-[#1E1B4B]/10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="bg-gradient-to-tr from-[#8B5CF6] to-[#1E1B4B] p-2 rounded-[8px] text-white shadow-sm transition-all duration-300 hover:scale-105 group/logo">
-                <Sparkles className="w-5 h-5 stroke-[1.75]" />
-              </div>
-              <span className="font-display font-bold text-lg tracking-tight text-[#1E1B4B]">
-                NextProf <span className="text-[#8B5CF6]">AI</span>
-              </span>
-            </Link>
-            <div className="h-5 w-[1px] bg-[#1E1B4B]/10 mx-2" />
-            <span className="bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-              <Shield className="w-3 h-3 stroke-[1.75]" /> Panel Admin
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={refreshData}
-              className="text-[#1E1B4B]/60 hover:text-[#1E1B4B] p-2 rounded-[8px] bg-white hover:bg-[#FAFAFA] border border-[#1E1B4B]/10 transition-all flex items-center gap-1.5 text-xs font-medium"
-              title="Refrescar Datos"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 stroke-[1.75] ${isPending ? 'animate-spin' : ''}`} />
-              <span>Sincronizar</span>
-            </button>
-            <Link
-              href="/dashboard"
-              className="text-[#1E1B4B]/80 hover:text-[#1E1B4B] flex items-center gap-1.5 text-xs font-semibold bg-white border border-[#1E1B4B]/10 px-3.5 py-2 rounded-[8px] transition-all hover:bg-[#FAFAFA] shadow-sm"
-            >
-              <ArrowLeft className="w-4 h-4 stroke-[1.75]" />
-              <span>Volver a App</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#8B5CF6]/5 dark:bg-[#8B5CF6]/8 blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-[5%] left-[-15%] w-[45%] h-[45%] rounded-full bg-[#8B5CF6]/3 dark:bg-[#8B5CF6]/5 blur-[120px] pointer-events-none" />
 
       {/* Toast Notification */}
       {notification && (
         <div className={`fixed bottom-5 right-5 z-50 px-5 py-3.5 rounded-[12px] flex items-center gap-3 border shadow-lg transition-all transform animate-bounce ${
           notification.type === 'success'
-            ? 'bg-white border-[#2ECC71]/30 text-[#2ECC71] shadow-md shadow-[#2ECC71]/5'
-            : 'bg-white border-rose-500/30 text-rose-600 shadow-md shadow-rose-500/5'
+            ? 'bg-white dark:bg-[#1F2937] border-[#2ECC71]/30 dark:border-[#2ECC71]/40 text-[#2ECC71] shadow-md shadow-[#2ECC71]/5'
+            : 'bg-white dark:bg-[#1F2937] border-rose-500/30 dark:border-rose-500/40 text-rose-600 dark:text-rose-400 shadow-md shadow-rose-500/5'
         }`}>
           <div className={`p-1 rounded-full ${notification.type === 'success' ? 'bg-[#2ECC71]/10' : 'bg-rose-500/10'}`}>
             <Check className="w-4 h-4 stroke-[1.75]" />
@@ -378,15 +340,36 @@ export default function AdminClient({
       {/* Main content grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         
+        {/* Header de Página */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold font-display text-[#1E1B4B] dark:text-white flex items-center gap-2">
+              <Shield className="w-6 h-6 text-[#8B5CF6] dark:text-violet-400 stroke-[1.75]" />
+              Panel de Administración
+            </h1>
+            <p className="text-[#1E1B4B]/60 dark:text-slate-400 text-xs font-light font-sans mt-0.5">
+              Gestiona usuarios registrados, suscripciones y configuraciones del motor de IA.
+            </p>
+          </div>
+          <button
+            onClick={refreshData}
+            className="text-[#1E1B4B]/60 dark:text-slate-350 hover:text-[#1E1B4B] dark:hover:text-white p-2 rounded-[8px] bg-white dark:bg-[#1F2937] hover:bg-[#FAFAFA] dark:hover:bg-[#1F2937]/80 border border-[#1E1B4B]/10 dark:border-white/5 transition-all flex items-center gap-1.5 text-xs font-semibold shadow-sm font-display shrink-0"
+            title="Refrescar Datos"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 stroke-[1.75] ${isPending ? 'animate-spin' : ''}`} />
+            <span>Sincronizar Datos</span>
+          </button>
+        </div>
+
         {/* Upper Tabs Navigation */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8 bg-white border border-[#1E1B4B]/10 p-2 rounded-[12px] shadow-sm">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8 bg-white dark:bg-[#1F2937] border border-[#1E1B4B]/10 dark:border-white/5 p-2 rounded-[12px] shadow-sm">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full md:w-auto">
             <button
               onClick={() => setActiveTab('stats')}
               className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-[8px] text-xs font-bold transition-all font-display border ${
                 activeTab === 'stats'
-                  ? 'bg-[#1E1B4B] text-white border-[#1E1B4B] shadow-sm'
-                  : 'text-[#1E1B4B]/60 hover:text-[#1E1B4B] hover:bg-[#FAFAFA] border-transparent'
+                  ? 'bg-[#1E1B4B] dark:bg-white text-white dark:text-[#0B0F19] border-[#1E1B4B] dark:border-white shadow-sm'
+                  : 'text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white hover:bg-[#FAFAFA] dark:hover:bg-[#0B0F19]/30 border-transparent'
               }`}
             >
               <Sparkles className="w-4 h-4 stroke-[1.75]" />
@@ -396,8 +379,8 @@ export default function AdminClient({
               onClick={() => setActiveTab('users')}
               className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-[8px] text-xs font-bold transition-all font-display border ${
                 activeTab === 'users'
-                  ? 'bg-[#1E1B4B] text-white border-[#1E1B4B] shadow-sm'
-                  : 'text-[#1E1B4B]/60 hover:text-[#1E1B4B] hover:bg-[#FAFAFA] border-transparent'
+                  ? 'bg-[#1E1B4B] dark:bg-white text-white dark:text-[#0B0F19] border-[#1E1B4B] dark:border-white shadow-sm'
+                  : 'text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white hover:bg-[#FAFAFA] dark:hover:bg-[#0B0F19]/30 border-transparent'
               }`}
             >
               <Users className="w-4 h-4 stroke-[1.75]" />
@@ -407,8 +390,8 @@ export default function AdminClient({
               onClick={() => setActiveTab('ai')}
               className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-[8px] text-xs font-bold transition-all font-display border ${
                 activeTab === 'ai'
-                  ? 'bg-[#1E1B4B] text-white border-[#1E1B4B] shadow-sm'
-                  : 'text-[#1E1B4B]/60 hover:text-[#1E1B4B] hover:bg-[#FAFAFA] border-transparent'
+                  ? 'bg-[#1E1B4B] dark:bg-white text-white dark:text-[#0B0F19] border-[#1E1B4B] dark:border-white shadow-sm'
+                  : 'text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white hover:bg-[#FAFAFA] dark:hover:bg-[#0B0F19]/30 border-transparent'
               }`}
             >
               <Settings className="w-4 h-4 stroke-[1.75]" />
@@ -418,8 +401,8 @@ export default function AdminClient({
               onClick={() => setActiveTab('prompts')}
               className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-[8px] text-xs font-bold transition-all font-display border ${
                 activeTab === 'prompts'
-                  ? 'bg-[#1E1B4B] text-white border-[#1E1B4B] shadow-sm'
-                  : 'text-[#1E1B4B]/60 hover:text-[#1E1B4B] hover:bg-[#FAFAFA] border-transparent'
+                  ? 'bg-[#1E1B4B] dark:bg-white text-white dark:text-[#0B0F19] border-[#1E1B4B] dark:border-white shadow-sm'
+                  : 'text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white hover:bg-[#FAFAFA] dark:hover:bg-[#0B0F19]/30 border-transparent'
               }`}
             >
               <Code className="w-4 h-4 stroke-[1.75]" />
