@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { JobOffer, CV } from '@/db/schema';
 import KanbanCard from './KanbanCard';
 import JobOfferDetailsModal from './JobOfferDetailsModal';
-import { createJobOffer, restoreArchivedJobOffer } from '@/app/dashboard/kanban/actions';
+import { createJobOffer, restoreArchivedJobOffer, updateJobOfferStatus } from '@/app/dashboard/kanban/actions';
 import { formatDate } from '@/lib/utils';
 import { Plus, X, Briefcase, Building2, Link, FileText, CheckCircle2, RefreshCw, Bookmark, Send, Calendar, PartyPopper, Ban, Search, SlidersHorizontal, Minimize2, Maximize2, Link2, ListChecks, Archive, RotateCcw, Eye, Inbox } from 'lucide-react';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 
 interface KanbanBoardProps {
   offers: JobOffer[];
@@ -43,6 +44,58 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
   const [viewMode, setViewMode] = useState<'compact' | 'comfortable'>('compact');
   const [restoringOfferId, setRestoringOfferId] = useState<string | null>(null);
 
+  // Hydration state
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Drag and drop states
+  const [localOffers, setLocalOffers] = useState(offers);
+  const [draggingOfferId, setDraggingOfferId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setLocalOffers(offers);
+  }, [offers]);
+
+  // Drag and Drop Handlers
+  const handleDragStart = (start: any) => {
+    setDraggingOfferId(start.draggableId);
+  };
+
+  const handleDragEnd = async (result: any) => {
+    setDraggingOfferId(null);
+    const { destination, source, draggableId } = result;
+
+    // Dropped outside a column or in the same place
+    if (!destination) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const targetColumnId = destination.droppableId as Column['id'];
+    const offerId = draggableId;
+
+    const offer = localOffers.find(o => o.id === offerId);
+    if (!offer || offer.status === targetColumnId) return;
+
+    // Optimistic UI update
+    const previousOffers = [...localOffers];
+    setLocalOffers(prev => prev.map(o => o.id === offerId ? { ...o, status: targetColumnId, updatedAt: new Date() } : o));
+
+    const actionResult = await updateJobOfferStatus(offerId, targetColumnId);
+    if (actionResult.error) {
+      // Revert if db update fails
+      setLocalOffers(previousOffers);
+    } else {
+      router.refresh();
+    }
+  };
+
   // Form State
   const [formData, setFormData] = useState({
     title: '',
@@ -62,8 +115,8 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const normalizedBacklogSearch = backlogSearchQuery.trim().toLowerCase();
-  const boardOffers = offers.filter((offer) => !isArchivedStatus(offer.status));
-  const archivedOffers = offers.filter((offer) => isArchivedStatus(offer.status));
+  const boardOffers = localOffers.filter((offer) => !isArchivedStatus(offer.status));
+  const archivedOffers = localOffers.filter((offer) => isArchivedStatus(offer.status));
   const linkedOffers = boardOffers.filter((offer) => Boolean(offer.cvId)).length;
   const filteredOffers = boardOffers.filter((offer) => {
     const matchesSearch = !normalizedSearch || [offer.title, offer.company, offer.platform]
@@ -145,6 +198,15 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
       router.refresh();
     }
   };
+
+  if (!hasMounted) {
+    return (
+      <div className="w-full min-h-[500px] flex flex-col items-center justify-center py-20 font-display">
+        <RefreshCw className="w-8 h-8 text-[#8b5cf6] animate-spin stroke-[1.75]" />
+        <p className="text-xs text-[#1e1b4b]/60 dark:text-slate-400 mt-3 font-sans">Cargando tablero interactivo...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -277,96 +339,118 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
       </div>
 
       {/* Grid de Columnas (Kanban) */}
-      <div className="-mx-4 px-4 overflow-x-auto pb-4 scrollbar-custom">
-        <div className="grid min-w-[1180px] grid-cols-5 gap-4 items-start">
-          {columns.map((column) => {
-            const rawColumnOffers = boardOffers.filter((offer) => offer.status === column.id);
-            const columnOffers = filteredOffers.filter((offer) => offer.status === column.id);
+      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="-mx-4 px-4 overflow-x-auto pb-4 scrollbar-custom">
+          <div className="grid min-w-[1180px] grid-cols-5 gap-4 items-start">
+            {columns.map((column) => {
+              const rawColumnOffers = boardOffers.filter((offer) => offer.status === column.id);
+              const columnOffers = filteredOffers.filter((offer) => offer.status === column.id);
 
-            return (
-              <div
-                key={column.id}
-                aria-label={`Columna ${column.title}`}
-                className={`flex h-[calc(100vh-330px)] min-h-[520px] max-h-[760px] flex-col bg-white dark:bg-[#1f2937] rounded-[12px] border ${column.borderColor} relative overflow-hidden shadow-sm hover:shadow-md transition-all`}
-              >
-                {/* Cabecera de la columna */}
-                <div className="shrink-0 p-3.5 pb-3 border-b border-[#1e1b4b]/10 dark:border-white/5 bg-[#fafafa] dark:bg-[#0b0f19]/45">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 ${column.color}`}>
-                        {renderColumnIcon(column.id)}
-                        {column.shortTitle}
-                      </span>
-                      <p className="text-[11px] text-[#1e1b4b]/50 dark:text-slate-400 mt-2 truncate font-sans">{column.description}</p>
+              return (
+                <div
+                  key={column.id}
+                  aria-label={`Columna ${column.title}`}
+                  className={`flex h-[calc(100vh-330px)] min-h-[520px] max-h-[760px] flex-col bg-white dark:bg-[#1f2937] rounded-[12px] border relative overflow-hidden transition-all duration-300 ${
+                    draggingOfferId && !columnOffers.some(o => o.id === draggingOfferId)
+                      ? 'shadow-sm border-[#1e1b4b]/10 dark:border-white/5'
+                      : `${column.borderColor} shadow-sm hover:shadow-md`
+                  }`}
+                >
+                  {/* Cabecera de la columna */}
+                  <div className="shrink-0 p-3.5 pb-3 border-b border-[#1e1b4b]/10 dark:border-white/5 bg-[#fafafa] dark:bg-[#0b0f19]/45">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 ${column.color}`}>
+                          {renderColumnIcon(column.id)}
+                          {column.shortTitle}
+                        </span>
+                        <p className="text-[11px] text-[#1e1b4b]/50 dark:text-slate-400 mt-2 truncate font-sans">{column.description}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1 font-display">
+                        <span className="text-sm font-bold text-[#1e1b4b] dark:text-white bg-white dark:bg-[#0b0f19] px-2.5 py-1 rounded-[8px] border border-[#1e1b4b]/10 dark:border-white/10 shadow-sm">
+                          {hasActiveFilters && rawColumnOffers.length > 0 ? `${columnOffers.length}/${rawColumnOffers.length}` : rawColumnOffers.length}
+                        </span>
+                        <span className="text-[10px] font-medium text-[#1e1b4b]/40 dark:text-slate-500">
+                          ofertas
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1 font-display">
-                      <span className="text-sm font-bold text-[#1e1b4b] dark:text-white bg-white dark:bg-[#0b0f19] px-2.5 py-1 rounded-[8px] border border-[#1e1b4b]/10 dark:border-white/10 shadow-sm">
-                        {hasActiveFilters && rawColumnOffers.length > 0 ? `${columnOffers.length}/${rawColumnOffers.length}` : rawColumnOffers.length}
-                      </span>
-                      <span className="text-[10px] font-medium text-[#1e1b4b]/40 dark:text-slate-500">
-                        ofertas
-                      </span>
-                    </div>
+                    {rawColumnOffers.length > 0 && (
+                      <div className="mt-3 h-1.5 rounded-full bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${column.color.split(' ')[1]}`}
+                          style={{
+                            width: `${Math.max(8, Math.round((columnOffers.length / rawColumnOffers.length) * 100))}%`,
+                            opacity: hasActiveFilters ? 0.8 : 1,
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-                  {rawColumnOffers.length > 0 && (
-                    <div className="mt-3 h-1.5 rounded-full bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 overflow-hidden">
+
+                  {/* Lista de tarjetas */}
+                  <Droppable droppableId={column.id}>
+                    {(provided, snapshot) => (
                       <div
-                        className={`h-full rounded-full ${column.color.split(' ')[1]}`}
-                        style={{
-                          width: `${Math.max(8, Math.round((columnOffers.length / rawColumnOffers.length) * 100))}%`,
-                          opacity: hasActiveFilters ? 0.8 : 1,
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`flex-1 overflow-y-auto scrollbar-custom p-3 pr-2 transition-all duration-200 ${
+                          viewMode === 'compact' ? 'space-y-2.5' : 'space-y-4'
+                        } ${
+                          snapshot.isDraggingOver
+                            ? 'bg-[#8b5cf6]/5 dark:bg-[#8b5cf6]/8 shadow-inner border border-dashed border-[#8b5cf6]/25 dark:border-violet-500/25 rounded-b-[12px] -m-[1px]'
+                            : ''
+                        }`}
+                      >
+                        {columnOffers.length === 0 ? (
+                          <div className="h-full min-h-[260px] flex flex-col items-center justify-center border-2 border-dashed border-[#1e1b4b]/10 dark:border-white/10 rounded-[12px] p-6 text-center text-[#1e1b4b]/40 dark:text-slate-500">
+                            {hasActiveFilters ? (
+                              <>
+                                <Search className="w-6 h-6 mb-2 text-[#1e1b4b]/30 dark:text-slate-600 opacity-70 stroke-[1.75]" />
+                                <p className="text-[11px] font-bold uppercase tracking-wider font-display">Sin resultados</p>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-6 h-6 mb-2 text-[#1e1b4b]/30 dark:text-slate-600 opacity-60 stroke-[1.75]" />
+                                <p className="text-[11px] font-bold uppercase tracking-wider font-display">Vacío</p>
+                              </>
+                            )}
+                          </div>
+                        ) : (
+                          columnOffers.map((offer, index) => (
+                            <KanbanCard
+                              key={offer.id}
+                              offer={offer}
+                              userCvs={userCvs}
+                              onOpenDetails={setSelectedOfferForDetails}
+                              density={viewMode}
+                              index={index}
+                            />
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
 
-                {/* Lista de tarjetas */}
-                <div className={`flex-1 overflow-y-auto scrollbar-custom p-3 pr-2 ${viewMode === 'compact' ? 'space-y-2.5' : 'space-y-4'}`}>
-                  {columnOffers.length === 0 ? (
-                    <div className="h-full min-h-[260px] flex flex-col items-center justify-center border-2 border-dashed border-[#1e1b4b]/10 dark:border-white/10 rounded-[12px] p-6 text-center text-[#1e1b4b]/40 dark:text-slate-500">
-                      {hasActiveFilters ? (
-                        <>
-                          <Search className="w-6 h-6 mb-2 text-[#1e1b4b]/30 dark:text-slate-600 opacity-70 stroke-[1.75]" />
-                          <p className="text-[11px] font-bold uppercase tracking-wider font-display">Sin resultados</p>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-6 h-6 mb-2 text-[#1e1b4b]/30 dark:text-slate-600 opacity-60 stroke-[1.75]" />
-                          <p className="text-[11px] font-bold uppercase tracking-wider font-display">Vacío</p>
-                        </>
-                      )}
+                  <div className="shrink-0 border-t border-[#1e1b4b]/10 dark:border-white/5 bg-[#fafafa] dark:bg-[#0b0f19]/45 px-3.5 py-2.5">
+                    <div className="flex items-center justify-between gap-2 text-[10px] text-[#1e1b4b]/40 dark:text-slate-500 font-sans">
+                      <span className="flex items-center gap-1.5 min-w-0">
+                        <ListChecks className="w-3.5 h-3.5 shrink-0 stroke-[1.75]" />
+                        <span className="truncate">{columnOffers.length} visibles</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 shrink-0">
+                        <Link2 className="w-3.5 h-3.5 stroke-[1.75]" />
+                        {columnOffers.filter((offer) => offer.cvId).length}
+                      </span>
                     </div>
-                  ) : (
-                    columnOffers.map((offer) => (
-                      <KanbanCard
-                        key={offer.id}
-                        offer={offer}
-                        userCvs={userCvs}
-                        onOpenDetails={setSelectedOfferForDetails}
-                        density={viewMode}
-                      />
-                    ))
-                  )}
-                </div>
-
-                <div className="shrink-0 border-t border-[#1e1b4b]/10 dark:border-white/5 bg-[#fafafa] dark:bg-[#0b0f19]/45 px-3.5 py-2.5">
-                  <div className="flex items-center justify-between gap-2 text-[10px] text-[#1e1b4b]/40 dark:text-slate-500 font-sans">
-                    <span className="flex items-center gap-1.5 min-w-0">
-                      <ListChecks className="w-3.5 h-3.5 shrink-0 stroke-[1.75]" />
-                      <span className="truncate">{columnOffers.length} visibles</span>
-                    </span>
-                    <span className="flex items-center gap-1.5 shrink-0">
-                      <Link2 className="w-3.5 h-3.5 stroke-[1.75]" />
-                      {columnOffers.filter((offer) => offer.cvId).length}
-                    </span>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </DragDropContext>
 
       {/* Backlog de candidaturas archivadas */}
       {isBacklogOpen && (
@@ -442,7 +526,7 @@ export default function KanbanBoard({ offers, userCvs }: KanbanBoardProps) {
                             <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-600 dark:text-amber-300 border-amber-500/20">
                               Archivada
                             </span>
-                            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-[#1e1b4b]/5 dark:bg-white/5 text-[#1e1b4b]/70 dark:text-slate-350 border-[#1e1b4b]/10 dark:border-white/10">
+                            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-[#1e1b4b]/5 dark:bg-white/5 text-[#1e1b4b]/70 dark:text-slate-300 border-[#1e1b4b]/10 dark:border-white/10">
                               Antes: {getOriginalStatusLabel(offer.status)}
                             </span>
                             <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border bg-[#fafafa] dark:bg-[#0b0f19] text-[#1e1b4b]/50 dark:text-slate-400 border border-[#1e1b4b]/10 dark:border-white/10">
