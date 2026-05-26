@@ -80,97 +80,30 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     .orderBy(prompts.name);
 
   return (
-    <div className="min-h-screen bg-[#030712] relative overflow-x-hidden">
+    <div className="relative overflow-x-hidden min-h-screen">
       {/* Background blur */}
-      <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-sky-950/20 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-950/15 blur-[120px] pointer-events-none" />
-
-      {/* Main Dashboard Nav */}
-      <nav className="glass-nav sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="bg-gradient-to-tr from-sky-400 to-indigo-500 p-2 rounded-xl text-white shadow-md">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <span className="font-display font-bold text-lg tracking-tight text-white">
-                NextProf <span className="text-sky-400">AI</span>
-              </span>
-            </Link>
-            <div className="h-5 w-[1px] bg-slate-800 mx-2" />
-            <span className="text-slate-400 text-xs font-medium">Panel General</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/dashboard/subscription"
-              className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all ${
-                isPremium
-                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/20 shadow-md shadow-amber-500/5'
-                  : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
-              }`}
-            >
-              {isPremium ? (
-                <>
-                  <Crown className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Socio Pro</span>
-                </>
-              ) : (
-                <>
-                  <CreditCard className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Plan Free</span>
-                </>
-              )}
-            </Link>
-
-            <Link
-              href="/dashboard/kanban"
-              className="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs font-semibold bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl transition-all"
-            >
-              <Kanban className="w-4 h-4" />
-              <span>Ver Kanban</span>
-            </Link>
-
-            {dbUser?.role === 'admin' && (
-              <Link
-                href="/admin"
-                className="text-purple-400 hover:text-purple-300 flex items-center gap-1.5 text-xs font-bold bg-purple-950/20 border border-purple-800/20 hover:border-purple-800/40 px-3.5 py-2 rounded-xl transition-all shadow-sm shadow-purple-950/5"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>Panel Admin</span>
-              </Link>
-            )}
-            
-            <Link
-              href="/logout"
-              className="text-slate-400 hover:text-rose-400 p-2 rounded-xl transition-colors"
-              title="Cerrar Sesión"
-            >
-              <LogOut className="w-4.5 h-4.5" />
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-[#8B5CF6]/3 dark:bg-[#8B5CF6]/5 blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#8B5CF6]/3 dark:bg-[#8B5CF6]/5 blur-[120px] pointer-events-none" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         {!isPremium && (
-          <div className="mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-3xl glass-card border border-slate-800 glow-primary">
+          <div className="mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-[12px] bg-white dark:bg-[#1F2937] border border-[#1E1B4B]/10 dark:border-white/5 shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="p-3.5 rounded-2xl bg-slate-900 text-slate-400 border border-slate-800/10">
-                <CreditCard className="w-6 h-6" />
+              <div className="p-3.5 rounded-[8px] bg-[#FAFAFA] dark:bg-[#0B0F19] text-[#1E1B4B]/70 dark:text-slate-350 border border-[#1E1B4B]/5 dark:border-white/5">
+                <CreditCard className="w-6 h-6 stroke-[1.75]" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <h2 className="text-xl font-bold font-display text-[#1E1B4B] dark:text-white flex items-center gap-2">
                   Hola, {session.user.name || 'Candidato'}
                 </h2>
-                <p className="text-slate-400 text-xs mt-1 font-light leading-relaxed max-w-xl">
+                <p className="text-[#1E1B4B]/60 dark:text-slate-400 text-xs mt-1 font-light leading-relaxed max-w-xl font-sans">
                   Estás en el Plan Gratuito. El motor de IA gratuito usa OpenRouter. Desbloquea plantillas profesionales e integraciones de IA avanzadas actualizando tu cuenta.
                 </p>
               </div>
             </div>
             <a
               href="/api/stripe/checkout"
-              className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shadow-amber-500/15 shrink-0 flex items-center justify-center gap-1.5"
+              className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold px-6 py-3 rounded-[8px] text-sm transition-all shadow-md shrink-0 flex items-center justify-center gap-1.5 font-display"
             >
               <Crown className="w-4 h-4" />
               Actualizar a Pro (10 €/mes)
@@ -180,36 +113,36 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
         {/* Panel de Estadísticas Rápidas */}
         {isPremium && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-            <div className="glass-card p-6 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 animate-fadeIn">
+            <div className="bg-white dark:bg-[#1F2937] p-6 rounded-[12px] border border-[#1E1B4B]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
-                <span className="text-slate-400 text-xs font-medium">Postulaciones Activas</span>
-                <h3 className="text-3xl font-black text-white mt-1">{totalOffers}</h3>
+                <span className="text-[#1E1B4B]/60 dark:text-slate-400 text-xs font-medium font-sans">Postulaciones Activas</span>
+                <h3 className="text-3xl font-bold font-display text-[#1E1B4B] dark:text-white mt-1">{totalOffers}</h3>
               </div>
-              <div className="p-3 bg-sky-500/10 text-sky-400 rounded-xl border border-sky-500/10">
-                <FileText className="w-5 h-5" />
+              <div className="p-3 bg-[#8B5CF6]/10 text-[#8B5CF6] rounded-xl border border-[#8B5CF6]/10">
+                <FileText className="w-5 h-5 stroke-[1.75]" />
               </div>
             </div>
 
-            <div className="glass-card p-6 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div className="bg-white dark:bg-[#1F2937] p-6 rounded-[12px] border border-[#1E1B4B]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
-                <span className="text-slate-400 text-xs font-medium">En Proceso de Entrevista</span>
-                <h3 className="text-3xl font-black text-amber-400 mt-1">{interviewOffers}</h3>
+                <span className="text-[#1E1B4B]/60 dark:text-slate-400 text-xs font-medium font-sans">En Proceso de Entrevista</span>
+                <h3 className="text-3xl font-bold font-display text-amber-500 dark:text-amber-400 mt-1">{interviewOffers}</h3>
               </div>
-              <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/10">
-                <Sparkles className="w-5 h-5" />
+              <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl border border-amber-500/10">
+                <Sparkles className="w-5 h-5 stroke-[1.75]" />
               </div>
             </div>
 
-            <div className="glass-card p-6 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div className="bg-white dark:bg-[#1F2937] p-6 rounded-[12px] border border-[#1E1B4B]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
-                <span className="text-slate-400 text-xs font-medium flex items-center gap-1.5">
-                  Ofertas Conseguidas <PartyPopper className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[#1E1B4B]/60 dark:text-slate-400 text-xs font-medium font-sans flex items-center gap-1.5">
+                  Ofertas Conseguidas <PartyPopper className="w-3.5 h-3.5 text-[#2ECC71]" />
                 </span>
-                <h3 className="text-3xl font-black text-emerald-400 mt-1">{successfulOffers}</h3>
+                <h3 className="text-3xl font-bold font-display text-[#2ECC71] mt-1">{successfulOffers}</h3>
               </div>
-              <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/10">
-                <CheckCircle2 className="w-5 h-5" />
+              <div className="p-3 bg-[#2ECC71]/10 text-[#2ECC71] rounded-xl border border-[#2ECC71]/10">
+                <CheckCircle2 className="w-5 h-5 stroke-[1.75]" />
               </div>
             </div>
           </div>
@@ -225,4 +158,5 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     </div>
   );
 }
+
 export const dynamic = 'force-dynamic';

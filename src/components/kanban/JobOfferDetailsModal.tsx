@@ -86,29 +86,28 @@ export default function JobOfferDetailsModal({
       onClose();
     }
   };
-
   // Obtener estilo de la plataforma
   const getPlatformStyle = (platform: string) => {
     switch (platform.toLowerCase()) {
       case 'linkedin':
         return {
-          badge: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+          badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
           glow: 'bg-blue-500/5',
         };
       case 'infojobs':
         return {
-          badge: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+          badge: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
           glow: 'bg-orange-500/5',
         };
       case 'indeed':
         return {
-          badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+          badge: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
           glow: 'bg-sky-500/5',
         };
       default:
         return {
-          badge: 'bg-slate-800 text-slate-400 border-slate-700',
-          glow: 'bg-indigo-500/5',
+          badge: 'bg-[#FAFAFA] dark:bg-[#0B0F19] text-[#1E1B4B]/50 dark:text-slate-400 border-[#1E1B4B]/10 dark:border-white/10',
+          glow: 'bg-[#8B5CF6]/3',
         };
     }
   };
@@ -120,8 +119,8 @@ export default function JobOfferDetailsModal({
     if (status.startsWith('archived:')) {
       return {
         title: 'Archivado',
-        style: 'text-amber-300 bg-amber-500/10 border-amber-500/20',
-        icon: <Archive className="w-3.5 h-3.5" />,
+        style: 'text-amber-600 dark:text-amber-300 bg-amber-500/10 border-amber-500/20',
+        icon: <Archive className="w-3.5 h-3.5 stroke-[1.75]" />,
       };
     }
 
@@ -129,38 +128,38 @@ export default function JobOfferDetailsModal({
       case 'interested':
         return {
           title: 'Interesado',
-          style: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-          icon: <Bookmark className="w-3.5 h-3.5" />,
+          style: 'text-indigo-650 dark:text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+          icon: <Bookmark className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
       case 'applied':
         return {
           title: 'Postulado',
-          style: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-          icon: <Send className="w-3.5 h-3.5" />,
+          style: 'text-blue-650 dark:text-blue-400 bg-blue-500/10 border-blue-500/20',
+          icon: <Send className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
       case 'interview':
         return {
           title: 'Entrevista',
-          style: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-          icon: <Calendar className="w-3.5 h-3.5" />,
+          style: 'text-amber-650 dark:text-amber-400 bg-amber-500/10 border-amber-500/20',
+          icon: <Calendar className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
       case 'offer':
         return {
           title: 'Ofrecido',
-          style: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-          icon: <PartyPopper className="w-3.5 h-3.5" />,
+          style: 'text-[#2ECC71] bg-[#2ECC71]/10 border-emerald-500/20',
+          icon: <PartyPopper className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
       case 'rejected':
         return {
           title: 'Rechazado',
-          style: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
-          icon: <Ban className="w-3.5 h-3.5" />,
+          style: 'text-rose-600 dark:text-rose-455 bg-rose-500/10 border-rose-500/20',
+          icon: <Ban className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
       default:
         return {
           title: status,
-          style: 'text-slate-400 bg-slate-500/10 border-slate-500/20',
-          icon: <Briefcase className="w-3.5 h-3.5" />,
+          style: 'text-[#1E1B4B]/50 dark:text-slate-400 bg-[#FAFAFA] dark:bg-[#0B0F19] border-[#1E1B4B]/10 dark:border-white/10',
+          icon: <Briefcase className="w-3.5 h-3.5 stroke-[1.75]" />,
         };
     }
   };
@@ -199,7 +198,7 @@ export default function JobOfferDetailsModal({
       description: formData.description || null,
     });
     setLoading(false);
-
+ 
     if (result.error) {
       setError(result.error);
     } else {
@@ -216,24 +215,24 @@ export default function JobOfferDetailsModal({
   return (
     <div
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300 animate-fadeIn"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md transition-opacity duration-300 animate-fadeIn"
     >
       <div
         ref={modalRef}
-        className="w-full max-w-2xl bg-[#070b17] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden transition-all duration-300 transform scale-100 max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl bg-white dark:bg-[#1F2937] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[12px] p-6 md:p-8 shadow-2xl relative overflow-hidden transition-all duration-300 transform scale-100 max-h-[90vh] flex flex-col"
       >
         {/* Glow effects de fondo */}
         <div className={`absolute top-[-10%] right-[-10%] w-64 h-64 rounded-full filter blur-[80px] pointer-events-none ${platformStyle.glow}`} />
-        <div className="absolute bottom-[-10%] left-[-10%] w-48 h-48 bg-indigo-500/5 rounded-full filter blur-[60px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-48 h-48 bg-[#8B5CF6]/3 dark:bg-[#8B5CF6]/5 rounded-full filter blur-[60px] pointer-events-none" />
 
         {/* Botón de cierre */}
         {!loading && (
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 md:top-8 md:right-8 text-slate-450 hover:text-white p-2 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-850 hover:border-slate-700 flex items-center justify-center transition-all z-50 shadow-md hover:shadow-black/20"
+            className="absolute top-6 right-6 md:top-8 md:right-8 text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white p-2 rounded-[8px] bg-white dark:bg-[#0B0F19]/45 hover:bg-[#FAFAFA] dark:hover:bg-[#0B0F19]/90 border border-[#1E1B4B]/10 dark:border-white/10 flex items-center justify-center transition-all z-50 shadow-sm"
             title="Cerrar"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 stroke-[1.75]" />
           </button>
         )}
 
@@ -242,7 +241,7 @@ export default function JobOfferDetailsModal({
           
           {/* Alerta de Error */}
           {error && (
-            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl font-medium pr-12 md:pr-16">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 dark:text-rose-455 text-xs rounded-[8px] font-medium pr-12 md:pr-16 font-sans">
               {error}
             </div>
           )}
@@ -263,42 +262,42 @@ export default function JobOfferDetailsModal({
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight Outfit font-display flex items-center gap-2">
-                    <Briefcase className="w-5 h-5 text-sky-400 shrink-0" />
+                  <h3 className="text-xl md:text-2xl font-bold text-[#1E1B4B] dark:text-white tracking-tight font-display flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-[#8B5CF6] dark:text-violet-400 shrink-0 stroke-[1.75]" />
                     {offer.title}
                   </h3>
-                  <p className="text-slate-350 text-sm font-semibold flex items-center gap-1.5">
-                    <Building2 className="w-4 h-4 text-slate-500 shrink-0" />
+                  <p className="text-[#1E1B4B]/70 dark:text-slate-300 text-sm font-semibold flex items-center gap-1.5 font-display">
+                    <Building2 className="w-4 h-4 text-[#1E1B4B]/40 dark:text-slate-500 shrink-0 stroke-[1.75]" />
                     {offer.company}
                   </p>
                 </div>
               </div>
 
               {/* Grid de Información Secundaría */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-b border-slate-900/80 py-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-b border-[#1E1B4B]/10 dark:border-white/5 py-4">
                 
                 {/* Fechas de Seguimiento */}
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
+                <div className="space-y-2 font-display">
+                  <span className="text-[11px] font-bold text-[#1E1B4B]/40 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 stroke-[1.75]" />
                     Fechas de Candidatura
                   </span>
-                  <div className="space-y-1 text-xs text-slate-300">
+                  <div className="space-y-1 text-xs text-[#1E1B4B]/80 dark:text-slate-200 font-sans">
                     <p className="flex justify-between sm:justify-start sm:gap-4">
-                      <span className="text-slate-500 font-medium">Registrado:</span> 
+                      <span className="text-[#1E1B4B]/40 dark:text-slate-500 font-medium">Registrado:</span> 
                       <span className="font-light">{formatDate(offer.createdAt)}</span>
                     </p>
                     <p className="flex justify-between sm:justify-start sm:gap-4">
-                      <span className="text-slate-500 font-medium">Actualizado:</span> 
+                      <span className="text-[#1E1B4B]/40 dark:text-slate-500 font-medium">Actualizado:</span> 
                       <span className="font-light">{formatDate(offer.updatedAt)}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Enlace original */}
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                    <Link2 className="w-3.5 h-3.5" />
+                <div className="space-y-2 font-display">
+                  <span className="text-[11px] font-bold text-[#1E1B4B]/40 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Link2 className="w-3.5 h-3.5 stroke-[1.75]" />
                     Oferta Original
                   </span>
                   <div>
@@ -307,43 +306,43 @@ export default function JobOfferDetailsModal({
                         href={offer.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-sky-400 hover:text-sky-300 font-semibold bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-xl hover:bg-sky-500/15 transition-all"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#8B5CF6] dark:text-violet-400 hover:text-[#8B5CF6]/90 dark:hover:text-violet-300 font-semibold bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 px-3 py-1.5 rounded-[8px] hover:bg-[#8B5CF6]/15 transition-all"
                       >
                         Ir al sitio web oficial
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3.5 h-3.5 stroke-[1.75]" />
                       </a>
                     ) : (
-                      <span className="text-xs text-slate-500 font-light italic">No se proporcionó enlace</span>
+                      <span className="text-xs text-[#1E1B4B]/40 dark:text-slate-500 font-light italic font-sans">No se proporcionó enlace</span>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* CV Vinculado y Selector */}
-              <div className="bg-slate-950/40 border border-slate-900 p-4 rounded-2xl space-y-3.5">
+              <div className="bg-[#FAFAFA] dark:bg-[#0B0F19]/35 border border-[#1E1B4B]/5 dark:border-white/5 p-4 rounded-[12px] space-y-3.5 font-display">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <FileText className="w-4 h-4 text-purple-400" />
+                    <h4 className="text-xs font-bold text-[#1E1B4B] dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                      <FileText className="w-4 h-4 text-[#8B5CF6] dark:text-violet-400 stroke-[1.75]" />
                       Currículum Vinculado
                     </h4>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-[#1E1B4B]/60 dark:text-slate-400 font-sans">
                       Asigna o cambia el CV optimizado para esta postulación específica.
                     </p>
                   </div>
 
                   {/* Selector rápido */}
-                  <div className="bg-slate-950/80 border border-slate-800 p-2 rounded-xl flex items-center gap-2 max-w-xs shrink-0">
-                    <Link2 className="w-3.5 h-3.5 text-slate-500" />
+                  <div className="bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 p-2 rounded-[8px] flex items-center gap-2 max-w-xs shrink-0">
+                    <Link2 className="w-3.5 h-3.5 text-[#1E1B4B]/40 dark:text-slate-550 stroke-[1.75]" />
                     <select
                       value={selectedCv}
                       onChange={handleCvChange}
                       disabled={loading}
-                      className="bg-transparent text-[11px] text-slate-300 font-medium focus:outline-none cursor-pointer pr-4"
+                      className="bg-transparent text-[11px] text-[#1E1B4B] dark:text-slate-300 font-medium focus:outline-none cursor-pointer pr-4"
                     >
-                      <option value="" className="bg-[#030712] text-slate-500">Sin CV Vinculado...</option>
+                      <option value="" className="bg-white dark:bg-[#0B0F19] text-[#1E1B4B]/40 dark:text-slate-500">Sin CV Vinculado...</option>
                       {userCvs.map((cv) => (
-                        <option key={cv.id} value={cv.id} className="bg-[#030712] text-slate-300">
+                        <option key={cv.id} value={cv.id} className="bg-white dark:bg-[#0B0F19] text-[#1E1B4B] dark:text-slate-300">
                           {cv.title.length > 25 ? cv.title.substring(0, 25) + '...' : cv.title}
                         </option>
                       ))}
@@ -353,12 +352,12 @@ export default function JobOfferDetailsModal({
 
                 {/* Si hay un CV enlazado, dar un botón premium para ir a verlo/editarlo */}
                 {offer.cvId && (
-                  <div className="border-t border-slate-900/60 pt-3 flex justify-end">
+                  <div className="border-t border-[#1E1B4B]/5 dark:border-white/5 pt-3 flex justify-end">
                     <a
                       href={`/editor/${offer.cvId}`}
-                      className="text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-4 py-2 rounded-xl shadow-md hover:shadow-purple-500/10 transition-all flex items-center gap-1.5"
+                      className="text-xs font-bold text-white bg-[#8B5CF6] hover:bg-[#8B5CF6]/90 px-4 py-2 rounded-[8px] shadow-sm transition-all flex items-center gap-1.5"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Sparkles className="w-3.5 h-3.5 stroke-[1.75]" />
                       Editar / Ver CV Optimizado
                     </a>
                   </div>
@@ -366,55 +365,55 @@ export default function JobOfferDetailsModal({
               </div>
 
               {/* Descripción Completa */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-slate-500" />
+              <div className="space-y-2 font-display">
+                <h4 className="text-xs font-bold text-[#1E1B4B]/60 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[#1E1B4B]/40 dark:text-slate-550 stroke-[1.75]" />
                   Descripción / Requisitos de la Oferta
                 </h4>
                 {offer.description ? (
-                  <div className="bg-slate-950/60 border border-slate-900 p-4 rounded-2xl max-h-[300px] overflow-y-auto scrollbar-custom text-slate-300 text-sm whitespace-pre-wrap leading-relaxed font-sans font-light">
+                  <div className="bg-white dark:bg-[#0B0F19]/45 border border-[#1E1B4B]/10 dark:border-white/10 p-4 rounded-[12px] max-h-[300px] overflow-y-auto scrollbar-custom text-[#1E1B4B]/80 dark:text-slate-200 text-sm whitespace-pre-wrap leading-relaxed font-sans font-light">
                     {offer.description}
                   </div>
                 ) : (
-                  <div className="bg-slate-950/20 border border-dashed border-slate-900 p-6 rounded-2xl text-center text-slate-550 italic text-xs">
+                  <div className="bg-white dark:bg-[#0B0F19]/25 border border-dashed border-[#1E1B4B]/10 dark:border-white/10 p-6 rounded-[12px] text-center text-[#1E1B4B]/40 dark:text-slate-500 italic text-xs font-sans">
                     No se ingresó descripción para esta candidatura. Puedes editarla para añadir los detalles.
                   </div>
                 )}
               </div>
 
               {/* Acciones del footer */}
-              <div className="flex justify-between items-center pt-4 border-t border-slate-900/80">
-                <span className="text-[10px] text-slate-550 italic font-light">
+              <div className="flex justify-between items-center pt-4 border-t border-[#1E1B4B]/10 dark:border-white/5 font-display">
+                <span className="text-[10px] text-[#1E1B4B]/40 dark:text-slate-500 italic font-light font-sans">
                   ID: {offer.id}
                 </span>
 
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-1.5 px-4.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 text-white font-semibold text-xs transition-all shadow-md"
+                  className="flex items-center gap-1.5 px-4.5 py-2 rounded-[8px] bg-[#FAFAFA] dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 hover:border-[#1E1B4B]/20 dark:hover:border-white/20 text-[#1E1B4B]/70 dark:text-slate-300 hover:text-[#1E1B4B] dark:hover:text-white font-bold text-xs transition-all shadow-sm"
                 >
-                  <Edit3 className="w-3.5 h-3.5 text-sky-400" />
+                  <Edit3 className="w-3.5 h-3.5 text-[#8B5CF6] dark:text-violet-400 stroke-[1.75]" />
                   Editar Detalles
                 </button>
               </div>
             </>
           ) : (
             /* ================= MODO EDICIÓN ================= */
-            <form onSubmit={handleSave} className="space-y-5">
+            <form onSubmit={handleSave} className="space-y-5 font-display">
               <div className="space-y-1 pr-12 md:pr-16">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Edit3 className="w-4.5 h-4.5 text-sky-400" />
+                <h3 className="text-lg font-bold text-[#1E1B4B] dark:text-white flex items-center gap-2">
+                  <Edit3 className="w-4.5 h-4.5 text-[#8B5CF6] dark:text-violet-400 stroke-[1.75]" />
                   Editar Candidatura
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#1E1B4B]/60 dark:text-slate-400 font-sans">
                   Modifica los datos principales de la oferta laboral.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-[#1E1B4B]/80 dark:text-slate-200 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-[#1E1B4B]/50 dark:text-slate-400 stroke-[1.75]" />
                     Puesto *
                   </label>
                   <input
@@ -424,13 +423,13 @@ export default function JobOfferDetailsModal({
                     value={formData.title}
                     onChange={handleInputChange}
                     placeholder="Ej. Senior React Developer"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    className="w-full bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1E1B4B] dark:text-white placeholder-[#1E1B4B]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8B5CF6] dark:focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all font-sans"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-[#1E1B4B]/80 dark:text-slate-200 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#1E1B4B]/50 dark:text-slate-400 stroke-[1.75]" />
                     Empresa *
                   </label>
                   <input
@@ -440,15 +439,15 @@ export default function JobOfferDetailsModal({
                     value={formData.company}
                     onChange={handleInputChange}
                     placeholder="Ej. Stripe"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    className="w-full bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1E1B4B] dark:text-white placeholder-[#1E1B4B]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8B5CF6] dark:focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all font-sans"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Link2 className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-[#1E1B4B]/80 dark:text-slate-200 flex items-center gap-1.5">
+                    <Link2 className="w-3.5 h-3.5 text-[#1E1B4B]/50 dark:text-slate-400 stroke-[1.75]" />
                     Enlace de la Oferta
                   </label>
                   <input
@@ -457,17 +456,17 @@ export default function JobOfferDetailsModal({
                     value={formData.url}
                     onChange={handleInputChange}
                     placeholder="https://..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    className="w-full bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1E1B4B] dark:text-white placeholder-[#1E1B4B]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8B5CF6] dark:focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all font-sans"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Plataforma</label>
+                  <label className="text-xs font-semibold text-[#1E1B4B]/80 dark:text-slate-200">Plataforma</label>
                   <select
                     name="platform"
                     value={formData.platform}
                     onChange={handleInputChange}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-sky-500 transition-all cursor-pointer"
+                    className="w-full bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1E1B4B] dark:text-white focus:outline-none focus:border-[#8B5CF6] dark:focus:border-[#8B5CF6] transition-all cursor-pointer font-sans"
                   >
                     <option value="linkedin">LinkedIn</option>
                     <option value="infojobs">InfoJobs</option>
@@ -478,7 +477,7 @@ export default function JobOfferDetailsModal({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-[#1E1B4B]/80 dark:text-slate-200">
                   Descripción / Requisitos de la Oferta
                 </label>
                 <textarea
@@ -487,23 +486,23 @@ export default function JobOfferDetailsModal({
                   onChange={handleInputChange}
                   rows={8}
                   placeholder="Pega aquí la descripción del puesto. El motor de IA comparará esta descripción con tu CV para optimizarlo."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all resize-y font-sans font-light"
+                  className="w-full bg-white dark:bg-[#0B0F19] border border-[#1E1B4B]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1E1B4B] dark:text-white placeholder-[#1E1B4B]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8B5CF6] dark:focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] transition-all resize-y font-sans font-light"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-900">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#1E1B4B]/10 dark:border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
                   disabled={loading}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-400 hover:text-white transition-colors"
+                  className="px-4 py-2.5 text-sm font-semibold text-[#1E1B4B]/60 dark:text-slate-400 hover:text-[#1E1B4B] dark:hover:text-white transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 rounded-xl hover:shadow-lg hover:shadow-sky-500/10 transition-all disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#1E1B4B] hover:bg-[#1E1B4B]/90 dark:bg-white dark:hover:bg-slate-100 dark:text-[#0B0F19] rounded-[8px] transition-all disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -512,7 +511,7 @@ export default function JobOfferDetailsModal({
                     </>
                   ) : (
                     <>
-                      <Save className="w-4 h-4" />
+                      <Save className="w-4 h-4 stroke-[1.75]" />
                       Guardar Cambios
                     </>
                   )}
@@ -520,7 +519,6 @@ export default function JobOfferDetailsModal({
               </div>
             </form>
           )}
-
         </div>
       </div>
     </div>
