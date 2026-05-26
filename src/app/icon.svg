@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Branding gradient matching from-sky-400 to-indigo-500 -->
+    <!-- Branding gradient using design.md purple -->
     <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8" />
-      <stop offset="100%" stop-color="#6366f1" />
+      <stop offset="0%" stop-color="#A78BFA" />
+      <stop offset="100%" stop-color="#8B5CF6" />
     </linearGradient>
     
     <!-- Subtle premium glow effect for the sparkles -->
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#4f46e5" flood-opacity="0.25" />
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#8B5CF6" flood-opacity="0.25" />
     </filter>
   </defs>
 
