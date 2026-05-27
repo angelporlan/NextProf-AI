@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Kanban, CreditCard, Crown, LogOut, Shield, FileText, Menu, X } from 'lucide-react';
+import { Kanban, CreditCard, Crown, LogOut, Shield, FileText, Menu, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import LanguageToggle from '@/components/ui/LanguageToggle';
@@ -74,9 +74,11 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between h-16 px-4 bg-white dark:bg-[#0b0f19] border-b border-[#1e1b4b]/10 dark:border-white/10 w-full sticky top-0 z-40 transition-colors duration-300">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="bg-gradient-to-tr from-[#8b5cf6] to-[#1e1b4b] p-1.5 rounded-lg text-white">
-            <Sparkles className="w-4 h-4 stroke-[1.75]" />
-          </div>
+          <img
+            src="/icon.svg"
+            alt=""
+            className="h-8 w-8 rounded-[8px] border border-[#1e1b4b]/10 bg-white shadow-sm dark:border-white/10"
+          />
           <span className="font-display font-bold text-base tracking-tight text-[#1e1b4b] dark:text-white">
             NextProf <span className="text-[#8b5cf6]">AI</span>
           </span>
@@ -111,9 +113,11 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
           {/* Logo & ThemeToggle at original position */}
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <div className="bg-gradient-to-tr from-[#8b5cf6] to-[#1e1b4b] p-2 rounded-xl text-white shadow-sm transition-all duration-300 hover:scale-105 group/logo">
-                <Sparkles className="w-5 h-5 stroke-[1.75]" />
-              </div>
+              <img
+                src="/icon.svg"
+                alt=""
+                className="h-10 w-10 rounded-[10px] border border-[#1e1b4b]/10 bg-white shadow-sm transition-all duration-300 hover:scale-105 dark:border-white/10"
+              />
               <span className="font-display font-bold text-lg tracking-tight text-[#1e1b4b] dark:text-white">
                 NextProf <span className="text-[#8b5cf6]">AI</span>
               </span>
