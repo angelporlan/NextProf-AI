@@ -81,6 +81,9 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
   // Shared Save Status State
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
+  // Estado de Pantalla Completa ('none', 'editor', 'pdf')
+  const [fullscreenPanel, setFullscreenPanel] = useState<'none' | 'editor' | 'pdf'>('none');
+
   // Estados de Estilo
   const [templateName, setTemplateName] = useState(cv.templateName);
   const [accentColor, setAccentColor] = useState(cv.accentColor || '#1a5f7a');
@@ -295,7 +298,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
   return (
     <div className="min-h-screen bg-[#fafafa] dark:bg-[#0b0f19] flex flex-col md:flex-row transition-colors duration-300 text-[#1e1b4b] dark:text-[#f3f4f6] font-sans">
       <Sidebar user={user} isPremium={isPremium} />
-      <div className="flex-1 h-screen flex flex-col relative overflow-hidden">
+      <div className="flex-1 h-screen flex flex-col relative z-10 overflow-hidden">
         {/* Background glow effects */}
       <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-[#8b5cf6]/3 dark:bg-[#8b5cf6]/5 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#8b5cf6]/3 dark:bg-[#8b5cf6]/5 blur-[120px] pointer-events-none" />
@@ -448,21 +451,25 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
         ref={containerRef}
         className={`flex-1 min-h-0 flex flex-col lg:flex-row p-6 overflow-y-auto lg:overflow-hidden editor-scrollbar transition-colors duration-300 ${isResizing ? 'select-none' : ''}`}
       >
-        <div 
-          style={{ width: isLg ? `${leftWidth}%` : '100%' }}
-          className="h-full min-h-[350px] lg:min-h-0 flex flex-col"
-        >
-          <MarkdownEditor
-            cvId={cv.id}
-            initialContent={cv.content}
-            originalContent={baseCvContent || undefined}
-            onSave={handleEditorSave}
-            saveStatus={saveStatus}
-            setSaveStatus={setSaveStatus}
-          />
-        </div>
+        {fullscreenPanel !== 'pdf' && (
+          <div 
+            style={{ width: isLg && fullscreenPanel === 'none' ? `${leftWidth}%` : '100%' }}
+            className="h-full min-h-[350px] lg:min-h-0 flex flex-col"
+          >
+            <MarkdownEditor
+              cvId={cv.id}
+              initialContent={cv.content}
+              originalContent={baseCvContent || undefined}
+              onSave={handleEditorSave}
+              saveStatus={saveStatus}
+              setSaveStatus={setSaveStatus}
+              isFullScreen={fullscreenPanel === 'editor'}
+              onToggleFullScreen={() => setFullscreenPanel(prev => prev === 'editor' ? 'none' : 'editor')}
+            />
+          </div>
+        )}
 
-        {isLg ? (
+        {isLg && fullscreenPanel === 'none' ? (
           <div
             onMouseDown={handleMouseDown}
             onDoubleClick={handleDoubleClick}
@@ -471,19 +478,23 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           >
             <div className="w-[2px] h-6 bg-[#1e1b4b]/20 dark:bg-white/20 group-hover:bg-[#8b5cf6] dark:group-hover:bg-[#8b5cf6] rounded-full transition-colors" />
           </div>
-        ) : (
+        ) : fullscreenPanel === 'none' ? (
           <div className="h-6 shrink-0" />
-        )}
+        ) : null}
 
-        <div 
-          style={{ width: isLg ? `${100 - leftWidth}%` : '100%' }}
-          className={`h-full min-h-[400px] lg:min-h-0 flex flex-col ${isResizing ? 'pointer-events-none' : ''}`}
-        >
-          <PdfViewer
-            cvId={cv.id}
-            version={pdfVersion}
-          />
-        </div>
+        {fullscreenPanel !== 'editor' && (
+          <div 
+            style={{ width: isLg && fullscreenPanel === 'none' ? `${100 - leftWidth}%` : '100%' }}
+            className={`h-full min-h-[400px] lg:min-h-0 flex flex-col ${isResizing ? 'pointer-events-none' : ''}`}
+          >
+            <PdfViewer
+              cvId={cv.id}
+              version={pdfVersion}
+              isFullScreen={fullscreenPanel === 'pdf'}
+              onToggleFullScreen={() => setFullscreenPanel(prev => prev === 'pdf' ? 'none' : 'pdf')}
+            />
+          </div>
+        )}
       </div>
 
       {/* Cajón Lateral / Modal de Optimización por IA */}

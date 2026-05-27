@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Eye, Download, Loader2, AlertTriangle, RefreshCw, Minus, Plus } from 'lucide-react';
+import { Eye, Download, Loader2, AlertTriangle, RefreshCw, Minus, Plus, Maximize2, Minimize2 } from 'lucide-react';
 
 interface PdfViewerProps {
   cvId: string;
   version: number;
+  isFullScreen?: boolean;
+  onToggleFullScreen?: () => void;
 }
 
-export default function PdfViewer({ cvId, version }: PdfViewerProps) {
+export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScreen }: PdfViewerProps) {
   const [loading, setLoading] = useState(true);
   const [errorTimeout, setErrorTimeout] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
@@ -110,6 +112,22 @@ export default function PdfViewer({ cvId, version }: PdfViewerProps) {
           <div className="text-[10px] font-bold text-[#1e1b4b] dark:text-slate-300 bg-white dark:bg-slate-900 border border-[#1e1b4b]/10 dark:border-slate-800 px-3 py-1.5 rounded-[8px] shadow-sm font-mono">
             Pág. 1 de 1
           </div>
+
+          {/* Full Screen toggle button */}
+          {onToggleFullScreen && (
+            <button
+              type="button"
+              onClick={onToggleFullScreen}
+              className="p-1.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-[#1e1b4b]/70 dark:text-slate-300 hover:text-[#1e1b4b] dark:hover:text-white transition-all shadow-sm flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+              title={isFullScreen ? "Salir de Pantalla Completa" : "Ver PDF en Grande"}
+            >
+              {isFullScreen ? (
+                <Minimize2 className="w-4 h-4 stroke-[1.75]" />
+              ) : (
+                <Maximize2 className="w-4 h-4 stroke-[1.75]" />
+              )}
+            </button>
+          )}
 
           {/* Download PDF button */}
           <a

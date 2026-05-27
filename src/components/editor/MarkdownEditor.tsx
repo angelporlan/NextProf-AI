@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { saveCvContent } from '@/app/dashboard/actions';
 import {
   FileEdit, Bold, Italic, List, Heading1, Heading2, Heading3, Eraser, Code, Eye,
-  GitCompare, Columns
+  GitCompare, Columns, Maximize2, Minimize2
 } from 'lucide-react';
 import { computeDiff, DiffLine } from '@/lib/diff';
 
@@ -15,6 +15,8 @@ interface MarkdownEditorProps {
   onSave?: () => void;
   saveStatus: 'saved' | 'saving' | 'error';
   setSaveStatus: (status: 'saved' | 'saving' | 'error') => void;
+  isFullScreen?: boolean;
+  onToggleFullScreen?: () => void;
 }
 
 // Markdown syntax highlighting parser for dark & light themes (used in Markdown mode)
@@ -260,7 +262,7 @@ function htmlToMd(html: string): string {
   return cleaned;
 }
 
-export default function MarkdownEditor({ cvId, initialContent, originalContent, onSave, saveStatus, setSaveStatus }: MarkdownEditorProps) {
+export default function MarkdownEditor({ cvId, initialContent, originalContent, onSave, saveStatus, setSaveStatus, isFullScreen, onToggleFullScreen }: MarkdownEditorProps) {
   const [content, setContent] = useState(initialContent);
   const [mode, setMode] = useState<'visual' | 'markdown' | 'diff'>('visual');
   const [diffView, setDiffView] = useState<'unified' | 'split'>('unified');
@@ -400,32 +402,49 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
           <span className="text-xs font-bold text-[#1e1b4b] dark:text-slate-300 tracking-wide uppercase font-display">Contenido</span>
         </div>
 
-        {/* Toggle Mode Switch */}
-        <div className="flex bg-[#fafafa] dark:bg-[#090d16] p-0.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800/80">
-          <button
-            type="button"
-            onClick={() => handleModeChange('visual')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'visual' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
-          >
-            <Eye className="w-3 h-3 stroke-[1.75]" />
-            Visual
-          </button>
-          <button
-            type="button"
-            onClick={() => handleModeChange('markdown')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'markdown' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
-          >
-            <Code className="w-3 h-3 stroke-[1.75]" />
-            Markdown
-          </button>
-          {originalContent && (
+        {/* Toggle Mode Switch & Full Screen */}
+        <div className="flex items-center gap-3">
+          <div className="flex bg-[#fafafa] dark:bg-[#090d16] p-0.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800/80">
             <button
               type="button"
-              onClick={() => handleModeChange('diff')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'diff' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
+              onClick={() => handleModeChange('visual')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'visual' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
             >
-              <GitCompare className="w-3.5 h-3.5 stroke-[1.75]" />
-              Cambios
+              <Eye className="w-3 h-3 stroke-[1.75]" />
+              Visual
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange('markdown')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'markdown' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
+            >
+              <Code className="w-3 h-3 stroke-[1.75]" />
+              Markdown
+            </button>
+            {originalContent && (
+              <button
+                type="button"
+                onClick={() => handleModeChange('diff')}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'diff' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
+              >
+                <GitCompare className="w-3.5 h-3.5 stroke-[1.75]" />
+                Cambios
+              </button>
+            )}
+          </div>
+
+          {onToggleFullScreen && (
+            <button
+              type="button"
+              onClick={onToggleFullScreen}
+              className="p-1.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-[#1e1b4b]/70 dark:text-slate-300 hover:text-[#1e1b4b] dark:hover:text-white transition-all shadow-sm flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95"
+              title={isFullScreen ? "Salir de Pantalla Completa" : "Ver Editor en Grande"}
+            >
+              {isFullScreen ? (
+                <Minimize2 className="w-4 h-4 stroke-[1.75]" />
+              ) : (
+                <Maximize2 className="w-4 h-4 stroke-[1.75]" />
+              )}
             </button>
           )}
         </div>

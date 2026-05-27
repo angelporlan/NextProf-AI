@@ -100,7 +100,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
 
       {/* Sidebar Panel */}
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-white dark:bg-[#0b0f19] border-r border-[#1e1b4b]/10 dark:border-white/10 z-50 transition-all duration-300 ease-in-out md:translate-x-0 ${
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-white dark:bg-[#0b0f19] border-r border-[#1e1b4b]/10 dark:border-white/10 z-50 md:z-0 transition-all duration-300 ease-in-out md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } flex flex-col justify-between p-6 select-none`}
       >
