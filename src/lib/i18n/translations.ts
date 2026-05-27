@@ -6,6 +6,95 @@ export const translations = {
       cancel: 'Cancelar',
       understood: 'Entendido',
     },
+    landing: {
+      nav: {
+        features: 'Características',
+        templates: 'Plantillas',
+        pricing: 'Precios',
+        dashboard: 'Dashboard',
+        login: 'Iniciar Sesión',
+        register: 'Registrarse',
+      },
+      hero: {
+        badge: 'Optimización de CVs impulsada por Inteligencia Artificial Híbrida',
+        titleBefore: 'Multiplica por',
+        titleHighlight: '10x tu Match',
+        titleAfter: 'con ofertas de empleo',
+        subtitle: 'Genera versiones personalizadas de tu currículum adaptadas exactamente a cada puesto. Redacción Harvard profesional, editor interactivo en tiempo real y visor PDF inteligente.',
+        primaryCta: 'Optimizar Mi CV Ahora',
+        secondaryCta: 'Explorar Plantillas',
+      },
+      features: {
+        title: 'Una suite potente de optimización profesional',
+        subtitle: 'Desde el editor interactivo con auto-guardado hasta la inteligencia semántica y el pipeline de postulaciones.',
+        editor: {
+          title: 'Editor Split-Screen',
+          desc: 'Escribe en Markdown al lado izquierdo y visualiza los ajustes de diseño, fuentes y márgenes aplicados instantáneamente en el PDF a la derecha.',
+        },
+        ai: {
+          title: 'IA Híbrida Inteligente',
+          desc: 'Utiliza OpenRouter con Qwen de forma gratuita. O escala al plan Pro para canalizar directamente con APIs oficiales de DeepSeek y Gemini para optimizaciones con el método STAR.',
+        },
+        kanban: {
+          title: 'Tablero Kanban',
+          desc: 'Registra tus postulaciones en un panel visual elegante de 5 columnas. Vincula el CV personalizado exacto que utilizaste para cada oferta de empleo.',
+        },
+      },
+      templates: {
+        title: '5 Plantillas de Nivel Profesional y Ultra-Optimizadas',
+        subtitle: 'Diseñadas para respetar la regla dorada de 1 página. El texto respira y encaja a la perfección según tus necesidades.',
+        harvard: {
+          desc: 'El estándar de oro. Diseño clásico centrado, jerarquía rigurosa y máxima aceptación por reclutadores en banca, consultoría y Big Tech.',
+          cta: 'Elegir clásico',
+        },
+        modern: {
+          desc: 'Asimetría de vanguardia con barra lateral azul petróleo. Ideal para roles de ingeniería de software, analistas y gerencia intermedia.',
+          cta: 'Elegir moderno',
+        },
+        minimal: {
+          desc: 'Elegancia pura. Texto sobrio y márgenes extra-amplios que aseguran un balance perfecto para perfiles ejecutivos o creativos senior.',
+          cta: 'Elegir minimal',
+        },
+        creative: {
+          desc: 'Inspiración disruptiva con degradados magenta/púrpura y un panel visual lateral que destaca en agencias, startups y diseño.',
+          cta: 'Elegir creativo',
+        },
+        swiss: {
+          desc: 'Inspirada en el diseño internacional suizo. Geometría perfecta, bordes finos de separación y un acento rojo neón icónico.',
+          cta: 'Elegir suizo',
+        },
+      },
+      pricing: {
+        title: 'Precios transparentes diseñados para tu éxito',
+        subtitle: 'Empieza gratis hoy mismo y escala al plan Pro cuando requieras optimizaciones y match semántico ilimitado.',
+        free: {
+          kicker: 'Plan Invitado',
+          name: 'Gratuito',
+          period: '/ para siempre',
+          feature1: '1 Currículum Base en Markdown',
+          feature2: 'Editor interactivo en vivo',
+          feature3: 'Descarga de PDF (Plantilla Harvard)',
+          feature4: 'Optimización IA básica (OpenRouter)',
+          cta: 'Empezar Gratis',
+        },
+        pro: {
+          badge: 'Recomendado',
+          kicker: 'Plan Premium',
+          name: 'Profesional',
+          period: '/ al mes',
+          feature1: 'Currículums ilimitados',
+          feature2: 'Acceso a las 5 Plantillas Premium',
+          feature3: 'Optimización IA oficial (DeepSeek o Gemini)',
+          feature4: 'Tablero Kanban de candidaturas',
+          feature5: 'Alineación de palabras clave con el método STAR',
+          checkoutCta: 'Adquirir Plan Pro',
+          registerCta: 'Registrarse y Comprar Pro',
+        },
+      },
+      footer: {
+        tagline: 'Diseñado con tecnologías de última generación.',
+      },
+    },
     sidebar: {
       menu: {
         cvs: 'Mis CVs',
@@ -417,6 +506,95 @@ export const translations = {
     common: {
       cancel: 'Cancel',
       understood: 'Understood',
+    },
+    landing: {
+      nav: {
+        features: 'Features',
+        templates: 'Templates',
+        pricing: 'Pricing',
+        dashboard: 'Dashboard',
+        login: 'Log In',
+        register: 'Sign Up',
+      },
+      hero: {
+        badge: 'Hybrid AI-powered CV optimization',
+        titleBefore: 'Multiply your',
+        titleHighlight: 'job match by 10x',
+        titleAfter: '',
+        subtitle: 'Generate tailored versions of your resume for every role. Professional Harvard-style writing, a real-time interactive editor, and a smart PDF preview.',
+        primaryCta: 'Optimize My CV Now',
+        secondaryCta: 'Explore Templates',
+      },
+      features: {
+        title: 'A powerful suite for professional optimization',
+        subtitle: 'From an autosaving interactive editor to semantic intelligence and an application pipeline.',
+        editor: {
+          title: 'Split-Screen Editor',
+          desc: 'Write in Markdown on the left and see layout, font, and margin adjustments applied instantly to the PDF on the right.',
+        },
+        ai: {
+          title: 'Smart Hybrid AI',
+          desc: 'Use OpenRouter with Qwen for free, or upgrade to Pro to connect directly with official DeepSeek and Gemini APIs for STAR-method optimizations.',
+        },
+        kanban: {
+          title: 'Kanban Board',
+          desc: 'Track your applications in an elegant 5-column visual board. Link the exact tailored CV you used for each job offer.',
+        },
+      },
+      templates: {
+        title: '5 Professional, Ultra-Optimized Templates',
+        subtitle: 'Designed around the golden 1-page rule. Your content has room to breathe while fitting perfectly to your needs.',
+        harvard: {
+          desc: 'The gold standard. A classic centered layout, rigorous hierarchy, and strong recruiter acceptance in banking, consulting, and Big Tech.',
+          cta: 'Choose classic',
+        },
+        modern: {
+          desc: 'A sharp asymmetric layout with a petrol-blue sidebar. Ideal for software engineering, analyst, and mid-management roles.',
+          cta: 'Choose modern',
+        },
+        minimal: {
+          desc: 'Pure elegance. Restrained text and extra-wide margins that create perfect balance for executive or senior creative profiles.',
+          cta: 'Choose minimal',
+        },
+        creative: {
+          desc: 'Disruptive inspiration with magenta/purple gradients and a visual side panel that stands out in agencies, startups, and design.',
+          cta: 'Choose creative',
+        },
+        swiss: {
+          desc: 'Inspired by international Swiss design. Perfect geometry, fine divider lines, and an iconic neon-red accent.',
+          cta: 'Choose Swiss',
+        },
+      },
+      pricing: {
+        title: 'Transparent pricing designed for your success',
+        subtitle: 'Start free today and upgrade to Pro when you need unlimited optimizations and semantic matching.',
+        free: {
+          kicker: 'Guest Plan',
+          name: 'Free',
+          period: '/ forever',
+          feature1: '1 Base CV in Markdown',
+          feature2: 'Live interactive editor',
+          feature3: 'PDF download (Harvard template)',
+          feature4: 'Basic AI optimization (OpenRouter)',
+          cta: 'Start Free',
+        },
+        pro: {
+          badge: 'Recommended',
+          kicker: 'Premium Plan',
+          name: 'Professional',
+          period: '/ month',
+          feature1: 'Unlimited CVs',
+          feature2: 'Access to all 5 Premium Templates',
+          feature3: 'Official AI optimization (DeepSeek or Gemini)',
+          feature4: 'Application Kanban board',
+          feature5: 'STAR-method keyword alignment',
+          checkoutCta: 'Get Pro Plan',
+          registerCta: 'Sign Up and Buy Pro',
+        },
+      },
+      footer: {
+        tagline: 'Designed with next-generation technology.',
+      },
     },
     sidebar: {
       menu: {
