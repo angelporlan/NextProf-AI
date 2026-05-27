@@ -14,52 +14,7 @@ import {
 import LinkNext from 'next/link';
 import AlertModal from '../ui/AlertModal';
 import Sidebar from '@/app/dashboard/Sidebar';
-
-const promptConfigs: Record<
-  string,
-  {
-    color: string;
-    hoverBg: string;
-    text: string;
-    bg: string;
-    activeBorder: string;
-    desc: string;
-  }
-> = {
-  'Modo Fidelidad': {
-    color: '#38bdf8', // Azulito (sky-400)
-    hoverBg: 'hover:bg-sky-500/5',
-    text: 'text-sky-400',
-    bg: 'bg-sky-500/10',
-    activeBorder: 'border-sky-500 ring-2 ring-sky-500/20',
-    desc: 'Fidelidad absoluta a tu trayectoria real. No inventa habilidades ni herramientas; optimiza tu redacción e integra palabras clave para pasar filtros ATS.'
-  },
-  'Modo Rendimiento': {
-    color: '#eab308', // Amarillo (yellow-500)
-    hoverBg: 'hover:bg-yellow-500/5',
-    text: 'text-yellow-400',
-    bg: 'bg-yellow-500/10',
-    activeBorder: 'border-yellow-500 ring-2 ring-yellow-500/20',
-    desc: 'Amplía y potencia tu experiencia de forma realista. Si dominas tecnologías equivalentes, las integra estratégicamente y optimiza la densidad ATS.'
-  },
-  'Modo Extremo': {
-    color: '#ea580c', // Naranjado casi rojo (orange-600)
-    hoverBg: 'hover:bg-orange-500/5',
-    text: 'text-orange-400',
-    bg: 'bg-orange-500/10',
-    activeBorder: 'border-orange-500 ring-2 ring-orange-500/20',
-    desc: 'Foco absoluto en superar el filtro ATS. Adapta tu CV e inyecta cualquier tecnología o requisito crítico exigido por la oferta para un match del 100%.'
-  }
-};
-
-const defaultPromptConfig = {
-  color: '#38bdf8',
-  hoverBg: 'hover:bg-sky-500/5',
-  text: 'text-sky-400',
-  bg: 'bg-sky-500/10',
-  activeBorder: 'border-sky-500 ring-2 ring-sky-500/20',
-  desc: 'Optimiza tu currículum de acuerdo a la oferta elegida.'
-};
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface EditorClientProps {
   cv: CV;
@@ -75,11 +30,66 @@ interface EditorClientProps {
 
 export default function EditorClient({ cv, isPremium, availablePrompts, baseCvContent, user }: EditorClientProps) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [pdfVersion, setPdfVersion] = useState(0);
 
   // Shared Save Status State
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+
+  // Dynamic Prompt Configs Mapper
+  const getPromptConfig = (name: string) => {
+    const configs: Record<
+      string,
+      {
+        color: string;
+        hoverBg: string;
+        text: string;
+        bg: string;
+        activeBorder: string;
+        desc: string;
+        displayName: string;
+      }
+    > = {
+      'Modo Fidelidad': {
+        color: '#38bdf8',
+        hoverBg: 'hover:bg-sky-500/5',
+        text: 'text-sky-400',
+        bg: 'bg-sky-500/10',
+        activeBorder: 'border-sky-500 ring-2 ring-sky-500/20',
+        desc: t.dashboard.modes.fidelity.desc,
+        displayName: t.dashboard.modes.fidelity.name,
+      },
+      'Modo Rendimiento': {
+        color: '#eab308',
+        hoverBg: 'hover:bg-yellow-500/5',
+        text: 'text-yellow-400',
+        bg: 'bg-yellow-500/10',
+        activeBorder: 'border-yellow-500 ring-2 ring-yellow-500/20',
+        desc: t.dashboard.modes.performance.desc,
+        displayName: t.dashboard.modes.performance.name,
+      },
+      'Modo Extremo': {
+        color: '#ea580c',
+        hoverBg: 'hover:bg-orange-500/5',
+        text: 'text-orange-400',
+        bg: 'bg-orange-500/10',
+        activeBorder: 'border-orange-500 ring-2 ring-orange-500/20',
+        desc: t.dashboard.modes.extreme.desc,
+        displayName: t.dashboard.modes.extreme.name,
+      }
+    };
+
+    return configs[name] || {
+      color: '#38bdf8',
+      hoverBg: 'hover:bg-sky-500/5',
+      text: 'text-sky-400',
+      bg: 'bg-sky-500/10',
+      activeBorder: 'border-sky-500 ring-2 ring-sky-500/20',
+      desc: t.dashboard.modes.default.desc,
+      displayName: name,
+    };
+  };
 
   // Estado de Pantalla Completa ('none', 'editor', 'pdf')
   const [fullscreenPanel, setFullscreenPanel] = useState<'none' | 'editor' | 'pdf'>('none');
@@ -229,7 +239,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
     e.preventDefault();
     setAiError(null);
     if (!aiFormData.jobTitle || !aiFormData.company || !aiFormData.jobDescription) {
-      setAiError('El puesto, empresa y descripción de la oferta son requeridos.');
+      setAiError(t('editor.aiModal.requiredError'));
       return;
     }
 
@@ -237,11 +247,11 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
 
     // Simular pasos fluidos de IA para dar un feedback ultra-premium
     const steps = [
-      'Extrayendo palabras clave de la oferta...',
-      'Analizando tu experiencia y habilidades del CV Base...',
-      'Alineando tu perfil con los requisitos clave...',
-      'Generando copia optimizada sin perder la verdad del contenido...',
-      'Creando CV y registrando candidatura en el Kanban...'
+      t('editor.aiModal.steps.keywords'),
+      t('editor.aiModal.steps.analyze'),
+      t('editor.aiModal.steps.align'),
+      t('editor.aiModal.steps.generate'),
+      t('editor.aiModal.steps.create')
     ];
 
     let currentStepIndex = 0;
@@ -281,7 +291,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
 
       const result = await response.json();
 
-      setAiStep('¡Completado con éxito! Redirigiendo...');
+      setAiStep(t('editor.aiModal.steps.success'));
       setTimeout(() => {
         setIsAiOpen(false);
         setAiLoading(false);
@@ -290,7 +300,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
 
     } catch (err: any) {
       clearInterval(stepInterval);
-      setAiError(err.message || 'Ocurrió un error inesperado.');
+      setAiError(err.message || t('dashboard.errors.unexpected'));
       setAiLoading(false);
     }
   };
@@ -309,7 +319,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           <LinkNext
             href="/dashboard"
             className="text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white p-2 rounded-xl hover:bg-[#1e1b4b]/5 dark:hover:bg-slate-900 transition-colors"
-            title="Volver al Panel"
+            title={t('editor.header.backToDashboard')}
           >
             <ArrowLeft className="w-4 h-4 stroke-[1.75]" />
           </LinkNext>
@@ -318,11 +328,11 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-bold text-[#1e1b4b] dark:text-white tracking-wide font-display">{cv.title}</h1>
               <span className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${cv.isBase ? 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'}`}>
-                {cv.isBase ? 'CV Base' : 'CV Optimizado'}
+                {cv.isBase ? t('editor.header.titleBase') : t('editor.header.titleOptimized')}
               </span>
             </div>
             <p className="text-[10px] text-[#1e1b4b]/60 dark:text-slate-400 font-light mt-0.5 font-sans">
-              Edita tu contenido Markdown y ajusta la tipografía e interlineado en tiempo real
+              {t('editor.header.subtitle')}
             </p>
           </div>
         </div>
@@ -334,7 +344,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-[8px] bg-[#8b5cf6] hover:bg-[#8b5cf6]/90 text-white font-bold text-xs shadow-sm hover:shadow-md transition-all font-display hover:-translate-y-0.5"
           >
             <Sparkles className="w-3.5 h-3.5 stroke-[1.75]" />
-            Optimizar con IA
+            {t('editor.header.optimizeBtn')}
           </button>
         </div>
       </header>
@@ -346,18 +356,18 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-[#1e1b4b]/10 dark:border-slate-800/85">
             <span className="text-[9px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1 font-display">
               <Layout className="w-3 h-3 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-              Diseño
+              {t('editor.toolbar.design')}
             </span>
             <select
               value={templateName}
               onChange={handleTemplateChange}
               className="bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-2 py-1 text-xs text-[#1e1b4b] dark:text-slate-300 font-medium focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all cursor-pointer h-7 shadow-sm"
             >
-              <option value="harvard">Harvard (Básico)</option>
-              <option value="modern" className={!isPremium ? 'text-slate-500' : ''}>Modern (Pro)</option>
-              <option value="minimal" className={!isPremium ? 'text-slate-500' : ''}>Minimal (Pro)</option>
-              <option value="creative" className={!isPremium ? 'text-slate-500' : ''}>Creative (Pro)</option>
-              <option value="swiss" className={!isPremium ? 'text-slate-500' : ''}>Swiss (Pro)</option>
+              <option value="harvard">{t('editor.toolbar.templates.harvard')}</option>
+              <option value="modern" className={!isPremium ? 'text-slate-500' : ''}>{t('editor.toolbar.templates.modern')}</option>
+              <option value="minimal" className={!isPremium ? 'text-slate-500' : ''}>{t('editor.toolbar.templates.minimal')}</option>
+              <option value="creative" className={!isPremium ? 'text-slate-500' : ''}>{t('editor.toolbar.templates.creative')}</option>
+              <option value="swiss" className={!isPremium ? 'text-slate-500' : ''}>{t('editor.toolbar.templates.swiss')}</option>
             </select>
           </div>
 
@@ -365,16 +375,16 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-[#1e1b4b]/10 dark:border-slate-800/85">
             <span className="text-[9px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1 font-display">
               <Type className="w-3 h-3 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-              Fuente
+              {t('editor.toolbar.font')}
             </span>
             <select
               value={fontFamily}
               onChange={handleFontChange}
               className="bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-2 py-1 text-xs text-[#1e1b4b] dark:text-slate-300 font-medium focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all cursor-pointer capitalize h-7 shadow-sm"
             >
-              <option value="helvetica">Helvetica (Sans)</option>
-              <option value="times">Times (Serif)</option>
-              <option value="courier">Courier (Mono)</option>
+              <option value="helvetica">{t('editor.toolbar.fonts.helvetica')}</option>
+              <option value="times">{t('editor.toolbar.fonts.times')}</option>
+              <option value="courier">{t('editor.toolbar.fonts.courier')}</option>
             </select>
           </div>
 
@@ -382,7 +392,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-[#1e1b4b]/10 dark:border-slate-800/85">
             <span className="text-[9px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1 font-display">
               <Sliders className="w-3 h-3 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-              Margen ({pageMargin}pt)
+              {t('editor.toolbar.margin').replace('{margin}', pageMargin.toString())}
             </span>
             <div className="flex items-center h-7">
               <input
@@ -401,7 +411,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           <div className="flex flex-col gap-1 pr-5 mr-5 border-r border-[#1e1b4b]/10 dark:border-slate-800/85">
             <span className="text-[9px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1 font-display">
               <Grid className="w-3 h-3 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-              Escala ({scale.toFixed(1)}x)
+              {t('editor.toolbar.scale').replace('{scale}', scale.toFixed(1))}
             </span>
             <div className="flex items-center h-7">
               <input
@@ -421,7 +431,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
         <div className="flex flex-col gap-1">
           <span className="text-[9px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1 font-display">
             <Palette className="w-3 h-3 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-            Acento
+            {t('editor.toolbar.accent')}
           </span>
           <div className="flex items-center gap-1.5 bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 px-2 py-0.5 rounded-[8px] h-7 shadow-sm">
             {colorPresets.map((preset) => (
@@ -439,7 +449,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                 value={accentColor}
                 onChange={(e) => handleAccentChange(e.target.value)}
                 className="absolute inset-0 w-8 h-8 -translate-x-2 -translate-y-2 cursor-pointer bg-transparent border-0 p-0"
-                title="Color personalizado"
+                title={t('editor.toolbar.customColor')}
               />
             </div>
           </div>
@@ -474,7 +484,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
             onMouseDown={handleMouseDown}
             onDoubleClick={handleDoubleClick}
             className="w-2 hover:bg-[#8b5cf6]/30 bg-[#1e1b4b]/5 dark:bg-white/5 cursor-col-resize h-full transition-all flex items-center justify-center group relative z-10 mx-2 rounded-xl shrink-0"
-            title="Arrastra para ajustar el tamaño, doble clic para centrar"
+            title={t('editor.resizerTitle')}
           >
             <div className="w-[2px] h-6 bg-[#1e1b4b]/20 dark:bg-white/20 group-hover:bg-[#8b5cf6] dark:group-hover:bg-[#8b5cf6] rounded-full transition-colors" />
           </div>
@@ -510,10 +520,10 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
               <div>
                 <h3 className="text-lg font-bold text-[#1e1b4b] dark:text-white flex items-center gap-2 font-display">
                   <Sparkles className="w-5 h-5 text-[#8b5cf6] dark:text-violet-400 animate-pulse stroke-[1.75]" />
-                  Optimización Inteligente por IA
+                  {t('editor.aiModal.title')}
                 </h3>
                 <p className="text-xs text-[#1e1b4b]/60 dark:text-slate-400 mt-1 font-sans">
-                  Adaptaremos una copia de este currículum para que coincida con los requisitos exactos de la oferta.
+                  {t('editor.aiModal.subtitle')}
                 </p>
               </div>
               <button
@@ -533,7 +543,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                   </div>
                   <div className="absolute inset-0 w-20 h-20 rounded-full border-t border-[#8b5cf6] animate-ping opacity-30" />
                 </div>
-                <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-2 font-display">Construyendo tu currículum adaptado</h4>
+                <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-2 font-display">{t('editor.aiModal.building')}</h4>
                 <p className="text-xs text-[#1e1b4b]/60 dark:text-slate-400 font-light max-w-sm h-12 flex items-center justify-center animate-pulse font-sans">
                   {aiStep}
                 </p>
@@ -541,7 +551,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
             ) : (
               <div className="flex-1 overflow-y-auto pr-1 relative z-10 space-y-4 py-2 scrollbar-custom">
                 {aiError && (
-                  <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 dark:text-rose-450 text-xs rounded-[8px] font-medium font-sans">
+                  <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 dark:text-rose-455 text-xs rounded-[8px] font-medium font-sans">
                     {aiError}
                   </div>
                 )}
@@ -550,8 +560,8 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                   <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500/90 text-xs rounded-[8px] flex items-start gap-3 font-sans">
                     <Crown className="w-5 h-5 shrink-0 mt-0.5 stroke-[1.75]" />
                     <div>
-                      <span className="font-bold block mb-0.5 font-display">Atención: Plan Gratuito Activo</span>
-                      El motor gratuito utiliza análisis estándar. Los socios PRO disfrutan de la máxima precisión semántica y velocidad de redacción con modelos de IA más avanzados.
+                      <span className="font-bold block mb-0.5 font-display">{t('editor.aiModal.freeWarning')}</span>
+                      {t('editor.aiModal.freeDesc')}
                     </div>
                   </div>
                 )}
@@ -561,14 +571,14 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <Briefcase className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Nombre del Puesto *
+                        {t('editor.aiModal.jobTitle')}
                       </label>
                       <input
                         type="text"
                         required
                         value={aiFormData.jobTitle}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
-                        placeholder="Ej. Frontend React Engineer"
+                        placeholder={t('editor.aiModal.jobTitlePlaceholder')}
                         className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all"
                       />
                     </div>
@@ -576,14 +586,14 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <Building2 className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Empresa *
+                        {t('editor.aiModal.company')}
                       </label>
                       <input
                         type="text"
                         required
                         value={aiFormData.company}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, company: e.target.value }))}
-                        placeholder="Ej. Stripe"
+                        placeholder={t('editor.aiModal.companyPlaceholder')}
                         className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all"
                       />
                     </div>
@@ -593,7 +603,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <Link className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Enlace a la Oferta
+                        {t('editor.aiModal.link')}
                       </label>
                       <input
                         type="url"
@@ -605,7 +615,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 font-display">Plataforma</label>
+                      <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 font-display">{t('editor.aiModal.platform')}</label>
                       <select
                         value={aiFormData.platform}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, platform: e.target.value }))}
@@ -614,7 +624,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                         <option value="linkedin">LinkedIn</option>
                         <option value="infojobs">InfoJobs</option>
                         <option value="indeed">Indeed</option>
-                        <option value="other">Otra</option>
+                        <option value="other">{t('editor.aiModal.platformOther')}</option>
                       </select>
                     </div>
                   </div>
@@ -630,10 +640,10 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                     <div className="flex flex-col">
                       <label htmlFor="addToKanban" className="text-xs font-bold text-[#1e1b4b]/80 dark:text-slate-200 cursor-pointer select-none flex items-center gap-1.5 font-display">
                         <Briefcase className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Registrar automáticamente en el Kanban
+                        {t('editor.aiModal.kanban')}
                       </label>
                       <span className="text-[10px] text-[#1e1b4b]/50 dark:text-slate-400 font-light mt-0.5 font-sans">
-                        Si está activado, creará una nueva candidatura vinculada a esta oferta en tu tablero Kanban.
+                        {t('editor.aiModal.kanbanDesc')}
                       </span>
                     </div>
                   </div>
@@ -641,16 +651,16 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                       <Sparkles className="w-3.5 h-3.5 text-[#8b5cf6] dark:text-violet-400 animate-pulse stroke-[1.75]" />
-                      Modo de Optimización Inteligente
+                      {t('editor.aiModal.mode')}
                     </label>
                     {availablePrompts.length === 0 ? (
                       <div className="w-full bg-[#fafafa] dark:bg-[#0b0f19]/40 border border-[#1e1b4b]/10 dark:border-white/5 rounded-[8px] px-4 py-3 text-xs text-[#1e1b4b]/60 dark:text-slate-400 font-sans">
-                        Por defecto (Estilo Harvard)
+                        {t('editor.aiModal.defaultMode')}
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {availablePrompts.map((prompt) => {
-                          const config = promptConfigs[prompt.name] || defaultPromptConfig;
+                          const config = getPromptConfig(prompt.name);
                           const isSelected = aiFormData.promptId === prompt.id;
                           const shadowClass = prompt.name === 'Modo Fidelidad' 
                             ? 'shadow-sky-500/5' 
@@ -668,7 +678,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                               <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                   <span className={`text-[8.5px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded ${config.bg} ${config.text}`}>
-                                    {prompt.name.replace('Modo ', '')}
+                                    {config.displayName.replace('Modo ', '').replace(' Mode', '')}
                                   </span>
                                   <div 
                                     className="w-2 h-2 rounded-full transition-transform group-hover:scale-125 shrink-0"
@@ -676,7 +686,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                                   />
                                 </div>
                                 <h4 className="text-[11px] font-bold text-[#1e1b4b] dark:text-white mb-1 group-hover:text-[#8b5cf6] dark:group-hover:text-violet-400 transition-colors font-display">
-                                  {prompt.name}
+                                  {config.displayName}
                                 </h4>
                               </div>
                               <p className="text-[9.5px] text-[#1e1b4b]/60 dark:text-slate-400 leading-normal font-light font-sans">
@@ -698,14 +708,14 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                       <FileText className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                      Descripción / Requisitos de la Oferta *
+                      {t('editor.aiModal.descLabel')}
                     </label>
                     <textarea
                       required
                       rows={8}
                       value={aiFormData.jobDescription}
                       onChange={(e) => setAiFormData(prev => ({ ...prev, jobDescription: e.target.value }))}
-                      placeholder="Pega aquí la descripción detallada de la oferta, incluyendo las responsabilidades y habilidades requeridas."
+                      placeholder={t('editor.aiModal.descPlaceholder')}
                       className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all resize-none font-sans"
                     />
                   </div>
@@ -721,7 +731,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                 className="px-4 py-2.5 text-sm font-semibold text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white transition-colors disabled:opacity-50"
                 disabled={aiLoading}
               >
-                Cerrar
+                {t('editor.aiModal.close')}
               </button>
               {!aiLoading && (
                 <button
@@ -730,7 +740,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
                   className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#8b5cf6] hover:bg-[#8b5cf6]/90 rounded-[8px] shadow-sm transition-all"
                 >
                   <Sparkles className="w-4 h-4 animate-pulse stroke-[1.75]" />
-                  Iniciar Optimización por IA
+                  {t('editor.aiModal.start')}
                 </button>
               )}
             </div>
@@ -741,12 +751,10 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
       <AlertModal
         isOpen={isUpgradeModalOpen}
         onClose={() => setIsUpgradeModalOpen(false)}
-        title="Plantilla Premium"
-        message={`Las plantillas Modern, Minimal, Creative y Swiss son exclusivas para socios PRO.
-
-¡Actualiza tu cuenta en el Dashboard para utilizarlas y potenciar tu impacto profesional!`}
+        title={t('editor.upgradeModal.title')}
+        message={t('editor.upgradeModal.message')}
         type="warning"
-        confirmLabel="Ir al Dashboard"
+        confirmLabel={t('editor.upgradeModal.confirm')}
         onConfirm={() => {
           setIsUpgradeModalOpen(false);
           router.push('/dashboard');
@@ -756,16 +764,16 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
       {/* Barra de estado inferior fija */}
       <footer className="w-full h-9 bg-white/95 dark:bg-[#090d16]/90 border-t border-[#1e1b4b]/10 dark:border-white/10 px-6 flex items-center justify-between shrink-0 relative z-30 text-[10px] text-[#1e1b4b]/70 dark:text-slate-400 font-medium transition-colors">
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-[#1e1b4b]/40 dark:text-slate-500">Guía rápida:</span>
-          <span className="font-semibold text-[#8b5cf6] dark:text-purple-400">## Título 2</span>
+          <span className="font-bold text-[#1e1b4b]/40 dark:text-slate-500">{t('editor.footer.quickGuide')}</span>
+          <span className="font-semibold text-[#8b5cf6] dark:text-purple-400">{t('editor.footer.title2')}</span>
           <span className="text-[#1e1b4b]/20 dark:text-slate-700">|</span>
-          <span className="font-semibold text-[#8b5cf6] dark:text-purple-400">### Título 3</span>
+          <span className="font-semibold text-[#8b5cf6] dark:text-purple-400">{t('editor.footer.title3')}</span>
           <span className="text-[#1e1b4b]/20 dark:text-slate-700">|</span>
-          <span className="font-semibold text-[#1e1b4b] dark:text-white">**Negrita**</span>
+          <span className="font-semibold text-[#1e1b4b] dark:text-white">{t('editor.footer.bold')}</span>
           <span className="text-[#1e1b4b]/20 dark:text-slate-700">|</span>
-          <span className="italic text-[#1e1b4b]/80 dark:text-slate-300">*Cursiva*</span>
+          <span className="italic text-[#1e1b4b]/80 dark:text-slate-300">{t('editor.footer.italic')}</span>
           <span className="text-[#1e1b4b]/20 dark:text-slate-700">|</span>
-          <span className="font-semibold text-sky-600 dark:text-sky-400">- Listas</span>
+          <span className="font-semibold text-sky-600 dark:text-sky-400">{t('editor.footer.lists')}</span>
         </div>
 
         {/* Estado del Guardado */}
@@ -773,19 +781,19 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
           {saveStatus === 'saved' && (
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 stroke-[1.75]" />
-              Guardado en la nube
+              {t('editor.footer.saved')}
             </span>
           )}
           {saveStatus === 'saving' && (
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#8b5cf6] dark:text-violet-400">
               <RefreshCw className="w-3.5 h-3.5 text-[#8b5cf6] dark:text-violet-400 animate-spin stroke-[1.75]" />
-              Guardando cambios...
+              {t('editor.footer.saving')}
             </span>
           )}
           {saveStatus === 'error' && (
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-rose-600 dark:text-rose-400">
               <AlertCircle className="w-3.5 h-3.5 text-rose-500 stroke-[1.75]" />
-              Error de conexión
+              {t('editor.footer.error')}
             </span>
           )}
         </div>

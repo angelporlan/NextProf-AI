@@ -7,6 +7,7 @@ import {
   GitCompare, Columns, Maximize2, Minimize2
 } from 'lucide-react';
 import { computeDiff, DiffLine } from '@/lib/diff';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface MarkdownEditorProps {
   cvId: string;
@@ -263,6 +264,7 @@ function htmlToMd(html: string): string {
 }
 
 export default function MarkdownEditor({ cvId, initialContent, originalContent, onSave, saveStatus, setSaveStatus, isFullScreen, onToggleFullScreen }: MarkdownEditorProps) {
+  const { t } = useLanguage();
   const [content, setContent] = useState(initialContent);
   const [mode, setMode] = useState<'visual' | 'markdown' | 'diff'>('visual');
   const [diffView, setDiffView] = useState<'unified' | 'split'>('unified');
@@ -399,7 +401,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
           <div className="p-1.5 bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-lg">
             <FileEdit className="w-4 h-4 stroke-[1.75]" />
           </div>
-          <span className="text-xs font-bold text-[#1e1b4b] dark:text-slate-300 tracking-wide uppercase font-display">Contenido</span>
+          <span className="text-xs font-bold text-[#1e1b4b] dark:text-slate-300 tracking-wide uppercase font-display">{t('editor.markdown.title')}</span>
         </div>
 
         {/* Toggle Mode Switch & Full Screen */}
@@ -411,7 +413,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'visual' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
             >
               <Eye className="w-3 h-3 stroke-[1.75]" />
-              Visual
+              {t('editor.markdown.modes.visual')}
             </button>
             <button
               type="button"
@@ -419,7 +421,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'markdown' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
             >
               <Code className="w-3 h-3 stroke-[1.75]" />
-              Markdown
+              {t('editor.markdown.modes.markdown')}
             </button>
             {originalContent && (
               <button
@@ -428,7 +430,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[10px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${mode === 'diff' ? 'bg-[#8b5cf6] text-white shadow-md shadow-[#8b5cf6]/20' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
               >
                 <GitCompare className="w-3.5 h-3.5 stroke-[1.75]" />
-                Cambios
+                {t('editor.markdown.modes.diff')}
               </button>
             )}
           </div>
@@ -438,7 +440,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               type="button"
               onClick={onToggleFullScreen}
               className="p-1.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-[#1e1b4b]/70 dark:text-slate-300 hover:text-[#1e1b4b] dark:hover:text-white transition-all shadow-sm flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95"
-              title={isFullScreen ? "Salir de Pantalla Completa" : "Ver Editor en Grande"}
+              title={isFullScreen ? t('editor.markdown.fullScreenExit') : t('editor.markdown.fullScreenEnter')}
             >
               {isFullScreen ? (
                 <Minimize2 className="w-4 h-4 stroke-[1.75]" />
@@ -456,10 +458,10 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
           {/* Change Stats */}
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-bold text-[#1e1b4b]/70 dark:text-slate-400 uppercase tracking-wider font-display">
-              Análisis IA:
+              {t('editor.markdown.diff.stats')}
             </span>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-650 dark:text-emerald-450 border border-emerald-500/20 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-650 dark:text-emerald-455 border border-emerald-500/20 text-[10px] font-bold">
                 +{diffLines.filter(l => l.type === 'added').length}
               </span>
               <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-650 dark:text-rose-455 border border-rose-500/20 text-[10px] font-bold">
@@ -475,7 +477,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               onClick={() => setDiffView('unified')}
               className={`flex items-center gap-1 px-3 py-1 rounded-[6px] text-[9px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${diffView === 'unified' ? 'bg-[#8b5cf6] text-white shadow-sm' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
             >
-              Unificada
+              {t('editor.markdown.diff.unified')}
             </button>
             <button
               type="button"
@@ -483,7 +485,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               className={`flex items-center gap-1 px-3 py-1 rounded-[6px] text-[9px] font-extrabold tracking-wider uppercase transition-all duration-250 cursor-pointer ${diffView === 'split' ? 'bg-[#8b5cf6] text-white shadow-sm' : 'text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-slate-200'}`}
             >
               <Columns className="w-2.5 h-2.5 stroke-[1.75]" />
-              Dividida
+              {t('editor.markdown.diff.split')}
             </button>
           </div>
         </div>
@@ -503,7 +505,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Bold className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Negrita
+              {t('editor.markdown.tooltips.bold')}
             </div>
           </div>
 
@@ -518,7 +520,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Italic className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Cursiva
+              {t('editor.markdown.tooltips.italic')}
             </div>
           </div>
           
@@ -535,7 +537,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <List className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Viñetas
+              {t('editor.markdown.tooltips.list')}
             </div>
           </div>
 
@@ -552,7 +554,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Heading1 className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Título 1
+              {t('editor.markdown.tooltips.h1')}
             </div>
           </div>
 
@@ -567,7 +569,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Heading2 className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Título 2
+              {t('editor.markdown.tooltips.h2')}
             </div>
           </div>
 
@@ -582,7 +584,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Heading3 className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Título 3
+              {t('editor.markdown.tooltips.h3')}
             </div>
           </div>
 
@@ -594,10 +596,10 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               onClick={() => applyStyle('formatBlock', 'P')}
               className="px-2 py-1 rounded-lg text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white hover:bg-[#1e1b4b]/5 dark:hover:bg-slate-800/80 transition-all cursor-pointer font-bold text-[10px] tracking-wider uppercase shrink-0"
             >
-              Párrafo
+              {t('editor.markdown.tooltips.paragraph')}
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Texto Normal
+              {t('editor.markdown.tooltips.normalText')}
             </div>
           </div>
 
@@ -614,7 +616,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <Eraser className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-white dark:bg-slate-950 border border-[#1e1b4b]/10 dark:border-slate-800 text-[#1e1b4b] dark:text-slate-300 text-[9px] font-bold tracking-wider uppercase rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-20 shadow-md">
-              Limpiar Formato
+              {t('editor.markdown.tooltips.clearFormat')}
             </div>
           </div>
         </div>
@@ -637,10 +639,10 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                 [&_h3]:text-[#8b5cf6] dark:[&_h3]:text-purple-400 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-1.5
                 [&_p]:mb-3 [&_p]:leading-relaxed
                 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-1
-                [&_li]:text-[#1e1b4b] dark:[&_li]:text-slate-350 [&_li]:leading-normal
+                [&_li]:text-[#1e1b4b] dark:[&_li]:text-slate-300 [&_li]:leading-normal
                 [&_strong]:text-[#1e1b4b] dark:[&_strong]:text-white [&_strong]:font-bold
                 [&_em]:text-[#1e1b4b]/70 dark:[&_em]:text-slate-400 [&_em]:italic"
-              data-placeholder="Escribe el contenido de tu CV aquí..."
+              data-placeholder={t('editor.markdown.placeholder')}
               style={{ outline: 'none' }}
             />
           </div>
@@ -663,7 +665,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               onChange={handleChange}
               onScroll={handleScroll}
               className="absolute inset-0 w-full h-full bg-transparent text-transparent caret-[#8b5cf6] dark:caret-[#8b5cf6] font-mono text-sm leading-relaxed p-6 focus:outline-none resize-none selection:bg-[#8b5cf6]/20 selection:text-transparent overflow-auto editor-scrollbar border-0"
-              placeholder="# Escribe aquí en Markdown..."
+              placeholder={t('editor.markdown.placeholderMarkdown')}
               spellCheck="false"
             />
           </>
@@ -694,7 +696,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                         {line.newLineNumber || ''}
                       </div>
                       {/* Diff Sign */}
-                      <div className={`w-6 select-none text-center font-bold py-0.5 shrink-0 ${isAdded ? 'text-emerald-600' : isRemoved ? 'text-rose-600' : 'text-[#1e1b4b]/30'}`}>
+                      <div className={`w-6 select-none text-center font-bold py-0.5 shrink-0 ${isAdded ? 'text-emerald-600' : isRemoved ? 'text-rose-650' : 'text-[#1e1b4b]/30'}`}>
                         {isAdded ? '+' : isRemoved ? '-' : ' '}
                       </div>
                       {/* Line Content */}
@@ -710,9 +712,9 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
               <div className="min-w-full flex gap-4 h-full">
                 {/* Left Side: Before (CV Base) */}
                 <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-[#1e1b4b]/10 dark:border-slate-900 bg-white dark:bg-[#070b13]/80 h-full overflow-y-auto">
-                  <div className="sticky top-0 bg-[#fafafa] dark:bg-[#0c1220] border-b border-[#1e1b4b]/10 dark:border-slate-900 px-4 py-2 text-[10px] font-bold text-rose-600 dark:text-rose-450/90 flex items-center gap-1.5 z-10 uppercase select-none">
+                  <div className="sticky top-0 bg-[#fafafa] dark:bg-[#0c1220] border-b border-[#1e1b4b]/10 dark:border-slate-900 px-4 py-2 text-[10px] font-bold text-rose-650 dark:text-rose-455 flex items-center gap-1.5 z-10 uppercase select-none">
                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                    Antes (CV Base Original)
+                    {t('editor.markdown.diff.before')}
                   </div>
                   <div className="flex-1 p-2 font-mono text-xs">
                     {diffLines.map((line, idx) => {
@@ -730,7 +732,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                       
                       const isRemoved = line.type === 'removed';
                       return (
-                        <div key={idx} className={`flex w-full min-h-[22px] items-start ${isRemoved ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300/85 border-l-2 border-rose-500/80 line-through decoration-rose-500/50' : 'text-[#1e1b4b]/70 dark:text-slate-400 border-l-2 border-transparent'}`}>
+                        <div key={idx} className={`flex w-full min-h-[22px] items-start ${isRemoved ? 'bg-rose-500/10 text-rose-800 dark:text-rose-350 border-l-2 border-rose-500/80 line-through decoration-rose-500/50' : 'text-[#1e1b4b]/70 dark:text-slate-400 border-l-2 border-transparent'}`}>
                           <div className="w-10 select-none text-[9px] text-[#1e1b4b]/40 dark:text-slate-600 text-right pr-2 py-0.5 border-r border-[#1e1b4b]/10 dark:border-slate-900/40 shrink-0">
                             {line.oldLineNumber || ''}
                           </div>
@@ -747,7 +749,7 @@ export default function MarkdownEditor({ cvId, initialContent, originalContent, 
                 <div className="flex-1 flex flex-col rounded-xl overflow-hidden border border-[#1e1b4b]/10 dark:border-slate-900 bg-white dark:bg-[#070b13]/80 h-full overflow-y-auto">
                   <div className="sticky top-0 bg-[#fafafa] dark:bg-[#0c1220] border-b border-[#1e1b4b]/10 dark:border-slate-900 px-4 py-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-450 flex items-center gap-1.5 z-10 uppercase select-none">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Después (Optimizado por IA)
+                    {t('editor.markdown.diff.after')}
                   </div>
                   <div className="flex-1 p-2 font-mono text-xs">
                     {diffLines.map((line, idx) => {

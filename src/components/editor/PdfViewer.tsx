@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Eye, Download, Loader2, AlertTriangle, RefreshCw, Minus, Plus, Maximize2, Minimize2 } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface PdfViewerProps {
   cvId: string;
@@ -11,6 +12,7 @@ interface PdfViewerProps {
 }
 
 export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScreen }: PdfViewerProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [errorTimeout, setErrorTimeout] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
@@ -82,7 +84,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
           <div className="p-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
             <Eye className="w-4 h-4 stroke-[1.75]" />
           </div>
-          <span className="text-xs font-bold text-[#1e1b4b] dark:text-slate-200 tracking-wide uppercase font-display">Vista Previa PDF</span>
+          <span className="text-xs font-bold text-[#1e1b4b] dark:text-slate-200 tracking-wide uppercase font-display">{t('editor.pdf.title')}</span>
         </div>
 
         {/* Grouped controls: Zoom, Page Number, and Download Button */}
@@ -92,7 +94,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
             <button
               onClick={() => setZoom(prev => Math.max(50, prev - 10))}
               className="p-1 text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white hover:bg-[#1e1b4b]/5 dark:hover:bg-slate-800 rounded-lg transition-colors"
-              title="Reducir Zoom"
+              title={t('editor.pdf.zoomOut')}
             >
               <Minus className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
@@ -102,7 +104,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
             <button
               onClick={() => setZoom(prev => Math.min(150, prev + 10))}
               className="p-1 text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white hover:bg-[#1e1b4b]/5 dark:hover:bg-slate-800 rounded-lg transition-colors"
-              title="Aumentar Zoom"
+              title={t('editor.pdf.zoomIn')}
             >
               <Plus className="w-3.5 h-3.5 stroke-[1.75]" />
             </button>
@@ -110,7 +112,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
 
           {/* Page number */}
           <div className="text-[10px] font-bold text-[#1e1b4b] dark:text-slate-300 bg-white dark:bg-slate-900 border border-[#1e1b4b]/10 dark:border-slate-800 px-3 py-1.5 rounded-[8px] shadow-sm font-mono">
-            Pág. 1 de 1
+            {t('editor.pdf.pages').replace('{current}', '1').replace('{total}', '1')}
           </div>
 
           {/* Full Screen toggle button */}
@@ -119,7 +121,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
               type="button"
               onClick={onToggleFullScreen}
               className="p-1.5 rounded-[8px] border border-[#1e1b4b]/10 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-[#1e1b4b]/70 dark:text-slate-300 hover:text-[#1e1b4b] dark:hover:text-white transition-all shadow-sm flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 shrink-0"
-              title={isFullScreen ? "Salir de Pantalla Completa" : "Ver PDF en Grande"}
+              title={isFullScreen ? t('editor.pdf.fullScreenExit') : t('editor.pdf.fullScreenEnter')}
             >
               {isFullScreen ? (
                 <Minimize2 className="w-4 h-4 stroke-[1.75]" />
@@ -137,7 +139,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all shadow-sm"
           >
             <Download className="w-3.5 h-3.5 stroke-[1.75]" />
-            <span>Descargar PDF</span>
+            <span>{t('editor.pdf.download')}</span>
           </a>
         </div>
       </div>
@@ -150,9 +152,9 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
               <AlertTriangle className="w-6 h-6 animate-pulse stroke-[1.75]" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-1 font-display">La generación está tardando más de lo habitual</h4>
+              <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-1 font-display">{t('editor.pdf.timeoutTitle')}</h4>
               <p className="text-[#1e1b4b]/60 dark:text-slate-450 text-xs font-light max-w-xs leading-relaxed font-sans">
-                El motor de renderizado PDF podría estar procesando cambios complejos.
+                {t('editor.pdf.timeoutDesc')}
               </p>
             </div>
             <div className="flex gap-3 mt-2 font-display">
@@ -161,7 +163,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
                 className="flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-white dark:bg-slate-900 border border-[#1e1b4b]/10 dark:border-slate-800 hover:border-[#1e1b4b]/20 dark:hover:border-slate-700 text-xs font-bold text-[#1e1b4b] dark:text-white transition-all shadow-sm hover:bg-[#fafafa]"
               >
                 <RefreshCw className="w-3.5 h-3.5 text-[#8b5cf6] animate-spin stroke-[1.75]" />
-                <span>Reintentar Carga</span>
+                <span>{t('editor.pdf.retry')}</span>
               </button>
               <a
                 href={`/api/pdf?cvId=${cvId}`}
@@ -170,14 +172,14 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
                 className="flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 text-xs font-bold text-[#8b5cf6] hover:bg-[#8b5cf6]/20 transition-all shadow-sm"
               >
                 <Download className="w-3.5 h-3.5 stroke-[1.75]" />
-                <span>Ver PDF Directo</span>
+                <span>{t('editor.pdf.direct')}</span>
               </a>
             </div>
           </div>
         ) : loading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-[#030712]/60 backdrop-blur-xs z-10 gap-3 transition-all">
             <Loader2 className="w-8 h-8 text-[#8b5cf6] animate-spin stroke-[1.75]" />
-            <p className="text-[#1e1b4b]/75 dark:text-slate-400 text-xs font-semibold tracking-wide uppercase font-display">Generando PDF en tiempo real...</p>
+            <p className="text-[#1e1b4b]/75 dark:text-slate-400 text-xs font-semibold tracking-wide uppercase font-display">{t('editor.pdf.loading')}</p>
           </div>
         ) : null}
         
