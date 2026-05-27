@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
+import { cookies } from 'next/headers';
+import { LanguageProvider } from '@/lib/i18n/LanguageContext';
+import { Language } from '@/lib/i18n/translations';
 import './globals.css';
 
 const inter = Inter({
@@ -24,10 +27,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = cookies();
+  const cookieLang = cookieStore.get('lang')?.value;
+  const initialLanguage: Language = (cookieLang === 'es' || cookieLang === 'en') ? cookieLang : 'es';
+
   return (
-    <html lang="es" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang={initialLanguage} className={`${inter.variable} ${outfit.variable}`}>
       <body className="bg-[#030712] text-slate-100 min-h-screen">
-        {children}
+        <LanguageProvider initialLanguage={initialLanguage}>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { Sparkles, Kanban, CreditCard, Crown, LogOut, Shield, FileText, Menu, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
+import LanguageToggle from '@/components/ui/LanguageToggle';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface SidebarProps {
   user: {
@@ -19,20 +21,21 @@ interface SidebarProps {
 export default function Sidebar({ user, isPremium }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { t, language } = useLanguage();
 
   const menuItems = [
     {
-      name: 'Mis CVs',
+      name: t('sidebar.menu.cvs'),
       href: '/dashboard',
       icon: FileText,
     },
     {
-      name: 'Kanban',
+      name: t('sidebar.menu.kanban'),
       href: '/dashboard/kanban',
       icon: Kanban,
     },
     {
-      name: 'Suscripción',
+      name: t('sidebar.menu.subscription'),
       href: '/dashboard/subscription',
       icon: isPremium ? Crown : CreditCard,
       premiumIcon: isPremium,
@@ -41,7 +44,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
 
   if (user.role === 'admin') {
     menuItems.push({
-      name: 'Panel Admin',
+      name: t('sidebar.menu.adminPanel'),
       href: '/admin',
       icon: Shield,
     });
@@ -78,7 +81,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
             NextProf <span className="text-[#8b5cf6]">AI</span>
           </span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
             onClick={toggleSidebar}
@@ -105,7 +108,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
         } flex flex-col justify-between p-6 select-none`}
       >
         <div className="space-y-8">
-          {/* Logo */}
+          {/* Logo & ThemeToggle at original position */}
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <div className="bg-gradient-to-tr from-[#8b5cf6] to-[#1e1b4b] p-2 rounded-xl text-white shadow-sm transition-all duration-300 hover:scale-105 group/logo">
@@ -152,12 +155,22 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
           </nav>
         </div>
 
-        {/* User profile & logout */}
+        {/* User profile & language settings */}
         <div className="pt-4 border-t border-[#1e1b4b]/10 dark:border-white/10 space-y-4">
-          <div className="flex items-center justify-between">
+          
+          {/* Sleek Language Panel */}
+          <div className="flex items-center justify-between bg-[#fafafa] dark:bg-[#1f2937]/30 border border-[#1e1b4b]/5 dark:border-white/5 px-3 py-2 rounded-[10px] shadow-xs">
+            <span className="text-[11px] font-bold text-[#1e1b4b]/60 dark:text-slate-400 font-display">
+              {language === 'es' ? 'Idioma' : 'Language'}
+            </span>
+            <LanguageToggle />
+          </div>
+
+          {/* User Profile */}
+          <div className="flex items-center justify-between px-1">
             <div className="min-w-0 flex-1">
-              <span className="block text-sm font-bold text-[#1e1b4b] dark:text-white truncate">
-                {user.name || 'Candidato'}
+              <span className="block text-sm font-bold text-[#1e1b4b] dark:text-white truncate font-display">
+                {user.name || t('sidebar.profile.candidate')}
               </span>
               <span className="block text-[11px] text-[#1e1b4b]/50 dark:text-slate-400 truncate">
                 {user.email}
@@ -170,24 +183,25 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
             )}
           </div>
 
+          {/* Logout Action */}
           <div className="relative">
             {showConfirm && (
               <div className="absolute bottom-full left-0 right-0 mb-3 p-4 bg-white dark:bg-[#1f2937] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[12px] shadow-xl z-50 animate-fadeIn backdrop-blur-md text-center">
                 <p className="text-[11px] font-bold text-[#1e1b4b] dark:text-white mb-2.5 font-display">
-                  ¿Estás seguro de cerrar sesión?
+                  {t('sidebar.logout.confirm')}
                 </p>
                 <div className="flex items-center gap-2 font-display">
                   <button
                     onClick={handleLogout}
                     className="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-1.5 px-3 rounded-[8px] text-[10px] transition-all flex items-center justify-center gap-1 shadow-sm"
                   >
-                    Sí, salir
+                    {t('sidebar.logout.yes')}
                   </button>
                   <button
                     onClick={() => setShowConfirm(false)}
                     className="flex-1 bg-[#fafafa] dark:bg-[#0b0f19] hover:bg-[#fafafa]/80 text-[#1e1b4b]/60 dark:text-slate-400 border border-[#1e1b4b]/10 dark:border-white/10 font-bold py-1.5 px-3 rounded-[8px] text-[10px] transition-all flex items-center justify-center"
                   >
-                    Cancelar
+                    {t('common.cancel')}
                   </button>
                 </div>
               </div>
@@ -198,7 +212,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
               className="flex items-center justify-center gap-2 w-full bg-[#fafafa] dark:bg-[#1f2937]/30 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-[#1e1b4b]/60 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-450 border border-[#1e1b4b]/10 dark:border-white/5 font-bold py-2.5 px-4 rounded-[8px] text-xs transition-all shadow-sm"
             >
               <LogOut className="w-3.5 h-3.5 stroke-[1.75]" />
-              <span>Cerrar Sesión</span>
+              <span>{t('sidebar.logout.button')}</span>
             </button>
           </div>
         </div>

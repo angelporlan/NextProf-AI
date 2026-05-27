@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { createBaseCv, deleteCv, setPrincipalCv } from './actions';
 import AlertModal from '@/components/ui/AlertModal';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 const promptConfigs: Record<
   string,
@@ -72,6 +73,7 @@ export default function DashboardClient({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [userCvs, setUserCvs] = useState<CV[]>(initialCvs);
+  const { t, language } = useLanguage();
 
   // Estados de control de modals
   const [isAiOpen, setIsAiOpen] = useState(false);
@@ -116,11 +118,11 @@ export default function DashboardClient({
       if (res.success && res.cvId) {
         router.push(`/editor/${res.cvId}`);
       } else {
-        alert(res.error || 'Error al crear el currículum.');
+        alert(res.error || t('dashboard.errors.createFail'));
       }
     } catch (err) {
       console.error(err);
-      alert('Ocurrió un error inesperado.');
+      alert(t('dashboard.errors.unexpected'));
     } finally {
       setCreateLoading(false);
     }
@@ -178,18 +180,44 @@ export default function DashboardClient({
     }
   };
 
+  // Helper to translate prompt titles & descs
+  const getPromptTranslation = (name: string) => {
+    if (name === 'Modo Fidelidad') {
+      return {
+        name: t('dashboard.modes.fidelity.name'),
+        desc: t('dashboard.modes.fidelity.desc'),
+      };
+    }
+    if (name === 'Modo Rendimiento') {
+      return {
+        name: t('dashboard.modes.performance.name'),
+        desc: t('dashboard.modes.performance.desc'),
+      };
+    }
+    if (name === 'Modo Extremo') {
+      return {
+        name: t('dashboard.modes.extreme.name'),
+        desc: t('dashboard.modes.extreme.desc'),
+      };
+    }
+    return {
+      name: name,
+      desc: t('dashboard.modes.default.desc'),
+    };
+  };
+
   // Optimización IA con estados progresivos fluidos
   const handleAiOptimize = async (e: React.FormEvent) => {
     e.preventDefault();
     setAiError(null);
 
     if (!principalCv) {
-      setAiError('No hay ningún CV principal designado.');
+      setAiError(t('dashboard.errors.noPrimary'));
       return;
     }
 
     if (!aiFormData.jobTitle || !aiFormData.company || !aiFormData.jobDescription) {
-      setAiError('El puesto, empresa y descripción de la oferta son obligatorios.');
+      setAiError(t('dashboard.errors.required'));
       return;
     }
 
@@ -197,11 +225,11 @@ export default function DashboardClient({
 
     // Simular pasos fluidos de IA para dar un feedback ultra-premium
     const steps = [
-      'Extrayendo palabras clave de la oferta...',
-      'Analizando tu experiencia y habilidades del CV Principal...',
-      'Alineando tu perfil con los requisitos clave...',
-      'Generando copia optimizada sin perder la verdad del contenido...',
-      'Creando CV y registrando candidatura en el Kanban...'
+      t('dashboard.steps.keywords'),
+      t('dashboard.steps.analyze'),
+      t('dashboard.steps.align'),
+      t('dashboard.steps.generate'),
+      t('dashboard.steps.create')
     ];
 
     let currentStepIndex = 0;
@@ -236,12 +264,12 @@ export default function DashboardClient({
 
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(text || 'Error en la optimización.');
+        throw new Error(text || t('dashboard.errors.unexpected'));
       }
 
       const result = await response.json();
 
-      setAiStep('¡Completado con éxito! Redirigiendo...');
+      setAiStep(t('dashboard.steps.success'));
       setTimeout(() => {
         setIsAiOpen(false);
         setAiLoading(false);
@@ -250,7 +278,7 @@ export default function DashboardClient({
 
     } catch (err: any) {
       clearInterval(stepInterval);
-      setAiError(err.message || 'Ocurrió un error inesperado.');
+      setAiError(err.message || t('dashboard.errors.unexpected'));
       setAiLoading(false);
     }
   };
@@ -261,15 +289,15 @@ export default function DashboardClient({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h3 className="text-lg font-bold text-[#1e1b4b] dark:text-white flex items-center gap-2 font-display">
-            Tus Currículums
+            {t('dashboard.cvs.title')}
             {principalCv && (
               <span className="text-[10px] py-0.5 px-2 bg-[#8b5cf6]/10 text-[#8b5cf6] dark:text-violet-400 border border-[#8b5cf6]/20 rounded-full font-medium tracking-wide flex items-center gap-1 font-sans">
                 <Star className="w-2.5 h-2.5 fill-[#8b5cf6]" />
-                Principal: {principalCv.title}
+                {t('dashboard.cvs.primary', { title: principalCv.title })}
               </span>
             )}
           </h3>
-          <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-light font-sans">Crea tu currículum base, marca tu principal o genera copias optimizadas.</p>
+          <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-light font-sans">{t('dashboard.cvs.subtitle')}</p>
         </div>
 
         {/* Acciones principales */}
@@ -281,7 +309,7 @@ export default function DashboardClient({
               required
               value={newCvTitle}
               onChange={(e) => setNewCvTitle(e.target.value)}
-              placeholder="Nombre del nuevo CV..."
+              placeholder={t('dashboard.cvs.placeholder')}
               className="bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-4 py-2 text-xs text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all w-full sm:w-44"
               disabled={createLoading}
             />
@@ -295,7 +323,7 @@ export default function DashboardClient({
               ) : (
                 <Plus className="w-4 h-4 stroke-[1.75]" />
               )}
-              Crear CV
+              {t('dashboard.cvs.create')}
             </button>
           </form>
 
@@ -315,7 +343,7 @@ export default function DashboardClient({
             ) : (
               <Lock className="w-3.5 h-3.5 text-[#1e1b4b]/40 dark:text-slate-500 stroke-[1.75]" />
             )}
-            <span>Generar con IA</span>
+            <span>{t('dashboard.cvs.generateAi')}</span>
           </button>
         </div>
       </div>
@@ -325,9 +353,9 @@ export default function DashboardClient({
           <div className="bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 p-4 rounded-full text-[#1e1b4b]/50 dark:text-slate-400 w-fit mx-auto mb-4">
             <FileText className="w-8 h-8 stroke-[1.75]" />
           </div>
-          <h4 className="text-base font-bold text-[#1e1b4b] dark:text-white mb-1.5 font-display">No tienes ningún currículum todavía</h4>
+          <h4 className="text-base font-bold text-[#1e1b4b] dark:text-white mb-1.5 font-display">{t('dashboard.cvs.empty.title')}</h4>
           <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-light max-w-sm mx-auto mb-6 font-sans">
-            Escribe un título en el campo superior derecho y presiona &quot;Crear CV&quot; para generar tu primer borrador en Markdown. ¡Se marcará como principal automáticamente!
+            {t('dashboard.cvs.empty.desc')}
           </p>
         </div>
       ) : (
@@ -354,13 +382,13 @@ export default function DashboardClient({
                           ? 'bg-[#1e1b4b]/5 dark:bg-white/5 text-[#1e1b4b]/70 dark:text-slate-300 border-[#1e1b4b]/10 dark:border-white/10'
                           : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                         }`}>
-                        {cv.isBase ? 'Base' : 'Copia'}
+                        {cv.isBase ? t('dashboard.cvs.card.base') : t('dashboard.cvs.card.copy')}
                       </span>
 
                       {cv.isPrincipal && (
                         <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#8b5cf6]/15 text-[#8b5cf6] dark:text-violet-400 border border-[#8b5cf6]/20 flex items-center gap-0.5 animate-pulse">
                           <Star className="w-2.5 h-2.5 fill-[#8b5cf6] stroke-[1.75]" />
-                          Principal
+                          {t('dashboard.cvs.card.primary')}
                         </span>
                       )}
                     </div>
@@ -377,7 +405,7 @@ export default function DashboardClient({
                         ? 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20 shadow-sm'
                         : 'bg-[#fafafa] dark:bg-[#0b0f19] text-[#1e1b4b]/40 dark:text-slate-400 border-[#1e1b4b]/10 dark:border-white/10 hover:text-[#8b5cf6] dark:hover:text-violet-400 hover:border-[#8b5cf6]/20 opacity-0 group-hover:opacity-100 transition-opacity'
                       }`}
-                    title={cv.isPrincipal ? "CV Principal" : "Establecer como Principal"}
+                    title={cv.isPrincipal ? t('dashboard.cvs.card.primary') : t('dashboard.cvs.card.setPrimary')}
                     disabled={cv.isPrincipal || isPending}
                   >
                     <Star className={`w-4 h-4 ${cv.isPrincipal ? 'fill-[#8b5cf6] text-[#8b5cf6] stroke-[1.75]' : 'stroke-[1.75]'}`} />
@@ -386,13 +414,13 @@ export default function DashboardClient({
 
                 <div className="grid grid-cols-2 gap-3 pl-2 text-[11px] font-light text-[#1e1b4b]/60 dark:text-slate-400 mb-6 font-sans">
                   <div className="bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/5 dark:border-white/5 px-2.5 py-1.5 rounded-[8px]">
-                    <span className="block text-[9px] text-[#1e1b4b]/40 dark:text-slate-500 font-bold uppercase">Plantilla</span>
+                    <span className="block text-[9px] text-[#1e1b4b]/40 dark:text-slate-500 font-bold uppercase">{t('dashboard.cvs.card.template')}</span>
                     <span className="text-[#1e1b4b]/80 dark:text-slate-200 font-medium capitalize">{cv.templateName}</span>
                   </div>
                   <div className="bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/5 dark:border-white/5 px-2.5 py-1.5 rounded-[8px]">
-                    <span className="block text-[9px] text-[#1e1b4b]/40 dark:text-slate-500 font-bold uppercase">Creado</span>
+                    <span className="block text-[9px] text-[#1e1b4b]/40 dark:text-slate-500 font-bold uppercase">{t('dashboard.cvs.card.created')}</span>
                     <span className="text-[#1e1b4b]/80 dark:text-slate-200 font-medium">
-                      {new Date(cv.createdAt).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
+                      {new Date(cv.createdAt).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
                 </div>
@@ -403,14 +431,14 @@ export default function DashboardClient({
                   href={`/editor/${cv.id}`}
                   className="text-xs font-semibold text-[#8b5cf6] dark:text-violet-400 hover:text-[#8b5cf6]/85 dark:hover:text-violet-300 flex items-center gap-1.5 group/link"
                 >
-                  Editar CV
+                  {t('dashboard.cvs.card.edit')}
                   <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform stroke-[1.75]" />
                 </Link>
 
                 <button
                   onClick={() => triggerDelete(cv.id)}
                   className="text-[#1e1b4b]/40 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 p-2 rounded-xl transition-all"
-                  title="Borrar Currículum"
+                  title={t('dashboard.cvs.card.delete')}
                   disabled={isPending}
                 >
                   <Trash2 className="w-4 h-4 stroke-[1.75]" />
@@ -434,10 +462,10 @@ export default function DashboardClient({
               <div>
                 <h3 className="text-lg font-bold text-[#1e1b4b] dark:text-white flex items-center gap-2 font-display">
                   <Sparkles className="w-5 h-5 text-[#8b5cf6] dark:text-violet-400 animate-pulse stroke-[1.75]" />
-                  Optimización Inteligente por IA
+                  {t('dashboard.modal.ai.title')}
                 </h3>
                 <p className="text-xs text-[#1e1b4b]/60 dark:text-slate-400 mt-1 font-sans">
-                  Generaremos un currículum adaptado a partir de tu currículum principal: <strong className="text-[#8b5cf6] dark:text-violet-400 font-semibold">{principalCv?.title}</strong>.
+                  {t('dashboard.modal.ai.desc')}<strong className="text-[#8b5cf6] dark:text-violet-400 font-semibold">{principalCv?.title}</strong>.
                 </p>
               </div>
               <button
@@ -458,7 +486,7 @@ export default function DashboardClient({
                   </div>
                   <div className="absolute inset-0 w-20 h-20 rounded-full border-t border-[#8b5cf6] animate-ping opacity-30" />
                 </div>
-                <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-2 font-display">Construyendo tu currículum adaptado</h4>
+                <h4 className="text-sm font-bold text-[#1e1b4b] dark:text-white mb-2 font-display">{t('dashboard.modal.ai.building')}</h4>
                 <p className="text-xs text-[#1e1b4b]/60 dark:text-slate-400 font-light max-w-sm h-12 flex items-center justify-center animate-pulse font-sans">
                   {aiStep}
                 </p>
@@ -476,8 +504,8 @@ export default function DashboardClient({
                   <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-500/90 text-xs rounded-[8px] flex items-start gap-3 font-sans">
                     <Crown className="w-5 h-5 shrink-0 mt-0.5 stroke-[1.75]" />
                     <div>
-                      <span className="font-bold block mb-0.5 font-display">Atención: Plan Gratuito Activo</span>
-                      El motor gratuito utiliza análisis estándar. Los socios PRO disfrutan de la máxima precisión semántica y velocidad de redacción con modelos de IA más avanzados.
+                      <span className="font-bold block mb-0.5 font-display">{t('dashboard.modal.ai.freeWarning')}</span>
+                      {t('dashboard.modal.ai.freeDesc')}
                     </div>
                   </div>
                 )}
@@ -487,14 +515,14 @@ export default function DashboardClient({
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <Briefcase className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Nombre del Puesto *
+                        {t('dashboard.modal.ai.jobTitle')}
                       </label>
                       <input
                         type="text"
                         required
                         value={aiFormData.jobTitle}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
-                        placeholder="Ej. Frontend React Engineer"
+                        placeholder={t('dashboard.modal.ai.jobTitlePlaceholder')}
                         className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all"
                       />
                     </div>
@@ -502,14 +530,14 @@ export default function DashboardClient({
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <Building2 className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Empresa *
+                        {t('dashboard.modal.ai.company')}
                       </label>
                       <input
                         type="text"
                         required
                         value={aiFormData.company}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, company: e.target.value }))}
-                        placeholder="Ej. Stripe"
+                        placeholder={t('dashboard.modal.ai.companyPlaceholder')}
                         className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all"
                       />
                     </div>
@@ -519,7 +547,7 @@ export default function DashboardClient({
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                         <LinkIcon className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Enlace a la Oferta
+                        {t('dashboard.modal.ai.link')}
                       </label>
                       <input
                         type="url"
@@ -531,7 +559,7 @@ export default function DashboardClient({
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 font-display">Plataforma</label>
+                      <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 font-display">{t('dashboard.modal.ai.platform')}</label>
                       <select
                         value={aiFormData.platform}
                         onChange={(e) => setAiFormData(prev => ({ ...prev, platform: e.target.value }))}
@@ -540,7 +568,7 @@ export default function DashboardClient({
                         <option value="linkedin">LinkedIn</option>
                         <option value="infojobs">InfoJobs</option>
                         <option value="indeed">Indeed</option>
-                        <option value="other">Otra</option>
+                        <option value="other">{t('dashboard.modal.ai.platformOther')}</option>
                       </select>
                     </div>
                   </div>
@@ -548,11 +576,11 @@ export default function DashboardClient({
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                       <Sparkles className="w-3.5 h-3.5 text-[#8b5cf6] dark:text-violet-400 animate-pulse stroke-[1.75]" />
-                      Modo de Optimización Inteligente
+                      {t('dashboard.modal.ai.mode')}
                     </label>
                     {availablePrompts.length === 0 ? (
                       <div className="w-full bg-[#fafafa] dark:bg-[#0b0f19]/40 border border-[#1e1b4b]/10 dark:border-white/5 rounded-[8px] px-4 py-3 text-xs text-[#1e1b4b]/60 dark:text-slate-400 font-sans">
-                        Por defecto (Estilo Harvard)
+                        {t('dashboard.modal.ai.defaultMode')}
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -565,6 +593,8 @@ export default function DashboardClient({
                               ? 'shadow-yellow-500/5' 
                               : 'shadow-orange-500/5';
                           
+                          const promptInfo = getPromptTranslation(prompt.name);
+                          
                           return (
                             <div
                               key={prompt.id}
@@ -575,7 +605,7 @@ export default function DashboardClient({
                                 {/* Header / Color dot */}
                                 <div className="flex items-center justify-between mb-1.5">
                                   <span className={`text-[8.5px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded ${config.bg} ${config.text}`}>
-                                    {prompt.name.replace('Modo ', '')}
+                                    {promptInfo.name.replace('Modo ', '').replace(' Mode', '')}
                                   </span>
                                   <div 
                                     className="w-2 h-2 rounded-full transition-transform group-hover:scale-125 shrink-0"
@@ -585,13 +615,13 @@ export default function DashboardClient({
                                 
                                 {/* Title */}
                                 <h4 className="text-[11px] font-bold text-[#1e1b4b] dark:text-white mb-1 group-hover:text-[#8b5cf6] dark:group-hover:text-violet-400 transition-colors font-display">
-                                  {prompt.name}
+                                  {promptInfo.name}
                                 </h4>
                               </div>
 
                               {/* Description / Summary */}
                               <p className="text-[9.5px] text-[#1e1b4b]/60 dark:text-slate-400 leading-normal font-light font-sans">
-                                {config.desc}
+                                {promptInfo.desc}
                               </p>
 
                               {/* Selected checkmark dot glow */}
@@ -619,10 +649,10 @@ export default function DashboardClient({
                     <div className="flex flex-col">
                       <label htmlFor="addToKanban" className="text-xs font-bold text-[#1e1b4b]/80 dark:text-slate-200 cursor-pointer select-none flex items-center gap-1.5 font-display">
                         <Briefcase className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                        Registrar automáticamente en el Kanban
+                        {t('dashboard.modal.ai.kanban')}
                       </label>
                       <span className="text-[10px] text-[#1e1b4b]/50 dark:text-slate-400 font-light mt-0.5 font-sans">
-                        Si está activado, creará una nueva candidatura vinculada a esta oferta en tu tablero Kanban.
+                        {t('dashboard.modal.ai.kanbanDesc')}
                       </span>
                     </div>
                   </div>
@@ -630,14 +660,14 @@ export default function DashboardClient({
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-[#1e1b4b]/80 dark:text-slate-200 flex items-center gap-1.5 font-display">
                       <FileText className="w-3.5 h-3.5 text-[#1e1b4b]/50 dark:text-slate-400 stroke-[1.75]" />
-                      Descripción / Requisitos de la Oferta *
+                      {t('dashboard.modal.ai.descLabel')}
                     </label>
                     <textarea
                       required
                       rows={8}
                       value={aiFormData.jobDescription}
                       onChange={(e) => setAiFormData(prev => ({ ...prev, jobDescription: e.target.value }))}
-                      placeholder="Pega aquí la descripción detallada de la oferta, incluyendo las responsabilidades y habilidades requeridas."
+                      placeholder={t('dashboard.modal.ai.descPlaceholder')}
                       className="w-full bg-white dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 rounded-[8px] px-3.5 py-2.5 text-sm text-[#1e1b4b] dark:text-white placeholder-[#1e1b4b]/40 dark:placeholder-slate-500 focus:outline-none focus:border-[#8b5cf6] dark:focus:border-[#8b5cf6] transition-all resize-none font-sans"
                     />
                   </div>
@@ -653,7 +683,7 @@ export default function DashboardClient({
                 className="px-4 py-2.5 text-sm font-semibold text-[#1e1b4b]/60 dark:text-slate-400 hover:text-[#1e1b4b] dark:hover:text-white transition-colors disabled:opacity-50"
                 disabled={aiLoading}
               >
-                Cerrar
+                {t('dashboard.modal.ai.close')}
               </button>
               {!aiLoading && (
                 <button
@@ -662,7 +692,7 @@ export default function DashboardClient({
                   className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#8b5cf6] hover:bg-[#8b5cf6]/90 rounded-[8px] shadow-sm transition-all"
                 >
                   <Sparkles className="w-4 h-4 animate-pulse stroke-[1.75]" />
-                  Iniciar Optimización por IA
+                  {t('dashboard.modal.ai.start')}
                 </button>
               )}
             </div>
@@ -674,14 +704,10 @@ export default function DashboardClient({
       <AlertModal
         isOpen={isAlertOpen}
         onClose={() => setIsAlertOpen(false)}
-        title="Se requiere un CV Principal"
-        message={`Para generar un nuevo currículum personalizado con IA desde el Dashboard, primero debes configurar uno de tus currículums como principal.
-
-Esto nos sirve como base con toda tu información para que la IA realice una excelente adaptación.
-
-Puedes marcar cualquiera de tus currículums haciendo clic en su icono de estrella en su tarjeta correspondiente.`}
+        title={t('dashboard.alert.primary.title')}
+        message={t('dashboard.alert.primary.msg')}
         type="warning"
-        confirmLabel="Entendido"
+        confirmLabel={t('common.understood')}
       />
 
       {/* AlertModal para confirmación de borrado */}
@@ -691,11 +717,11 @@ Puedes marcar cualquiera de tus currículums haciendo clic en su icono de estrel
           setIsDeleteOpen(false);
           setCvToDelete(null);
         }}
-        title="¿Eliminar Currículum?"
-        message="Esta acción no se puede deshacer y borrará permanentemente este currículum de tu cuenta. Si es tu currículum principal, reasignaremos automáticamente otra de tus bases como principal."
+        title={t('dashboard.alert.delete.title')}
+        message={t('dashboard.alert.delete.msg')}
         type="danger"
-        confirmLabel="Sí, eliminar"
-        cancelLabel="Cancelar"
+        confirmLabel={t('dashboard.alert.delete.confirm')}
+        cancelLabel={t('common.cancel')}
         onConfirm={handleConfirmDelete}
       />
     </div>

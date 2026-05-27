@@ -9,6 +9,7 @@ import { isProSubscription } from '@/lib/subscription';
 import { stripe } from '@/lib/stripe';
 import { syncStripeSubscription } from '@/lib/stripe-subscription-sync';
 import DashboardClient from './DashboardClient';
+import { getServerTranslations } from '@/lib/i18n/server';
 
 interface DashboardPageProps {
   searchParams?: {
@@ -24,6 +25,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   }
 
   const userId = session.user.id;
+  const { t } = getServerTranslations();
 
   if (searchParams?.checkout === 'success' && searchParams.session_id) {
     const checkoutSession = await stripe.checkout.sessions.retrieve(searchParams.session_id);
@@ -94,10 +96,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
               <div>
                 <h2 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white flex items-center gap-2">
-                  Hola, {session.user.name || 'Candidato'}
+                  {t('dashboard.banner.title', { name: session.user.name || t('sidebar.profile.candidate') })}
                 </h2>
                 <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs mt-1 font-light leading-relaxed max-w-xl font-sans">
-                  Estás en el Plan Gratuito. El motor de IA gratuito usa OpenRouter. Desbloquea plantillas profesionales e integraciones de IA avanzadas actualizando tu cuenta.
+                  {t('dashboard.banner.desc')}
                 </p>
               </div>
             </div>
@@ -106,7 +108,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold px-6 py-3 rounded-[8px] text-sm transition-all shadow-md shrink-0 flex items-center justify-center gap-1.5 font-display"
             >
               <Crown className="w-4 h-4" />
-              Actualizar a Pro (10 €/mes)
+              {t('dashboard.banner.upgrade')}
             </a>
           </div>
         )}
@@ -116,7 +118,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 animate-fadeIn">
             <div className="bg-white dark:bg-[#1f2937] p-6 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
-                <span className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-medium font-sans">Postulaciones Activas</span>
+                <span className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-medium font-sans">{t('dashboard.stats.active')}</span>
                 <h3 className="text-3xl font-bold font-display text-[#1e1b4b] dark:text-white mt-1">{totalOffers}</h3>
               </div>
               <div className="p-3 bg-[#8b5cf6]/10 text-[#8b5cf6] rounded-xl border border-[#8b5cf6]/10">
@@ -126,7 +128,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
             <div className="bg-white dark:bg-[#1f2937] p-6 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
-                <span className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-medium font-sans">En Proceso de Entrevista</span>
+                <span className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-medium font-sans">{t('dashboard.stats.interview')}</span>
                 <h3 className="text-3xl font-bold font-display text-amber-500 dark:text-amber-400 mt-1">{interviewOffers}</h3>
               </div>
               <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl border border-amber-500/10">
@@ -137,7 +139,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <div className="bg-white dark:bg-[#1f2937] p-6 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 flex items-center justify-between shadow-sm">
               <div>
                 <span className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs font-medium font-sans flex items-center gap-1.5">
-                  Ofertas Conseguidas <PartyPopper className="w-3.5 h-3.5 text-[#2ecc71]" />
+                  {t('dashboard.stats.successful')} <PartyPopper className="w-3.5 h-3.5 text-[#2ecc71]" />
                 </span>
                 <h3 className="text-3xl font-bold font-display text-[#2ecc71] mt-1">{successfulOffers}</h3>
               </div>
