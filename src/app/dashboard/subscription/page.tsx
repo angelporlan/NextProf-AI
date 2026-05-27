@@ -6,6 +6,7 @@ import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { isProSubscription } from '@/lib/subscription';
 import { Sparkles, Crown, CreditCard, ArrowLeft, CheckCircle2, Lock, ArrowRight, ShieldCheck, Zap, Lightbulb } from 'lucide-react';
+import { getServerTranslations } from '@/lib/i18n/server';
 
 export default async function SubscriptionPage() {
   const session = await auth();
@@ -14,6 +15,7 @@ export default async function SubscriptionPage() {
   }
 
   const userId = session.user.id;
+  const { t } = getServerTranslations();
 
   // Obtener información del usuario
   const [dbUser] = await db
@@ -39,26 +41,26 @@ export default async function SubscriptionPage() {
           {isPremium ? (
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[10px] uppercase font-bold tracking-wider mb-4 animate-pulse-subtle font-display">
               <Crown className="w-3.5 h-3.5 stroke-[1.75]" />
-              Socio Pro Activo
+              {t('subscription.badges.activePro')}
             </div>
           ) : (
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#1f2937] border border-[#1e1b4b]/10 dark:border-white/10 text-[#1e1b4b]/70 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-4 shadow-sm font-display">
               <CreditCard className="w-3.5 h-3.5 stroke-[1.75]" />
-              Plan Gratuito Activo
+              {t('subscription.badges.activeFree')}
             </div>
           )}
           
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#1e1b4b] dark:text-white font-display">
             {isPremium ? (
-              <>Tu Suscripción <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Pro Ejecutiva</span></>
+              <>{t('subscription.title.pro').split(' Pro ')[0]} <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Pro Ejecutiva</span></>
             ) : (
-              <>Elige tu camino al <span className="bg-gradient-to-r from-[#8b5cf6] to-[#1e1b4b] dark:to-indigo-300 bg-clip-text text-transparent">Éxito Profesional</span></>
+              <>{t('subscription.title.free').split(' Éxito ')[0]} <span className="bg-gradient-to-r from-[#8b5cf6] to-[#1e1b4b] dark:to-indigo-300 bg-clip-text text-transparent">Éxito Profesional</span></>
             )}
           </h1>
           <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-xs md:text-sm mt-3 font-light leading-relaxed max-w-xl mx-auto font-sans">
             {isPremium 
-              ? "Gestiona los detalles de tu facturación y sigue impulsando tu carrera con el motor semántico de optimización más avanzado." 
-              : "Optimiza tu currículum, adapta copias para cada oferta y controla tus procesos de selección. Accede a los motores oficiales Premium."}
+              ? t('subscription.subtitle.pro')
+              : t('subscription.subtitle.free')}
           </p>
         </div>
 
@@ -71,17 +73,17 @@ export default async function SubscriptionPage() {
               <div>
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="text-lg font-bold font-display text-[#1e1b4b] dark:text-white">Plan Gratuito</h3>
-                    <p className="text-xs text-[#1e1b4b]/40 dark:text-slate-500 mt-0.5 font-sans">Perfecto para comenzar</p>
+                    <h3 className="text-lg font-bold font-display text-[#1e1b4b] dark:text-white">{t('subscription.freeCard.name')}</h3>
+                    <p className="text-xs text-[#1e1b4b]/40 dark:text-slate-550 mt-0.5 font-sans">{t('subscription.freeCard.summary')}</p>
                   </div>
                   <span className="text-xs font-bold text-[#1e1b4b]/60 dark:text-slate-400 bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/10 dark:border-white/10 px-3 py-1 rounded-full font-display">
-                    Activo
+                    {t('subscription.freeCard.badge')}
                   </span>
                 </div>
 
                 <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-black font-display text-[#1e1b4b] dark:text-white">0 €</span>
-                  <span className="text-xs text-[#1e1b4b]/40 dark:text-slate-500 font-light">/ para siempre</span>
+                  <span className="text-3xl font-black font-display text-[#1e1b4b] dark:text-white">{t('subscription.freeCard.price')}</span>
+                  <span className="text-xs text-[#1e1b4b]/40 dark:text-slate-550 font-light">{t('subscription.freeCard.period')}</span>
                 </div>
 
                 <div className="h-[1px] bg-[#1e1b4b]/10 dark:bg-white/5 w-full mb-6" />
@@ -89,19 +91,19 @@ export default async function SubscriptionPage() {
                 <ul className="space-y-4 text-xs font-light text-[#1e1b4b]/80 dark:text-slate-200 font-sans">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Currículums base ilimitados</span>
+                    <span>{t('subscription.freeCard.feature1')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Plantilla ejecutiva <strong>Harvard</strong></span>
+                    <span>{t('subscription.freeCard.feature2').split(' Harvard')[0]} <strong>Harvard</strong></span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Optimización básica por IA (OpenRouter)</span>
+                    <span>{t('subscription.freeCard.feature3')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Tablero Kanban completo para seguimiento</span>
+                    <span>{t('subscription.freeCard.feature4')}</span>
                   </li>
                 </ul>
               </div>
@@ -111,7 +113,7 @@ export default async function SubscriptionPage() {
                   href="/dashboard"
                   className="w-full bg-white dark:bg-[#1f2937] text-[#1e1b4b] dark:text-slate-200 border border-[#1e1b4b]/10 dark:border-white/10 hover:bg-[#fafafa] dark:hover:bg-[#1f2937]/80 font-semibold py-3 px-4 rounded-[8px] text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm"
                 >
-                  Ir a mis Currículums
+                  {t('subscription.freeCard.btn')}
                   <ArrowRight className="w-3.5 h-3.5 stroke-[1.75]" />
                 </Link>
               </div>
@@ -126,19 +128,19 @@ export default async function SubscriptionPage() {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h3 className="text-lg font-bold font-display text-[#1e1b4b] dark:text-white flex items-center gap-1.5">
-                      Socio Pro
+                      {t('subscription.proCard.name')}
                       <Crown className="w-4 h-4 text-amber-500 animate-pulse-subtle stroke-[1.75]" />
                     </h3>
-                    <p className="text-xs text-amber-600 dark:text-amber-500/70 mt-0.5 font-sans">Para profesionales serios</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-550/70 mt-0.5 font-sans">{t('subscription.proCard.summary')}</p>
                   </div>
                   <span className="text-[9px] uppercase tracking-wider font-extrabold text-[#8b5cf6] bg-[#8b5cf6]/10 border border-[#8b5cf6]/35 px-2.5 py-0.5 rounded-full font-display">
-                    Recomendado
+                    {t('subscription.proCard.badge')}
                   </span>
                 </div>
 
                 <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-3xl font-black font-display text-[#1e1b4b] dark:text-white">10 €</span>
-                  <span className="text-xs text-[#1e1b4b]/50 dark:text-slate-400 font-light">/ mes (IVA inc.)</span>
+                  <span className="text-3xl font-black font-display text-[#1e1b4b] dark:text-white">{t('subscription.proCard.price')}</span>
+                  <span className="text-xs text-[#1e1b4b]/50 dark:text-slate-400 font-light">{t('subscription.proCard.period')}</span>
                 </div>
 
                 <div className="h-[1px] bg-[#1e1b4b]/10 dark:bg-white/5 w-full mb-6" />
@@ -146,23 +148,23 @@ export default async function SubscriptionPage() {
                 <ul className="space-y-4 text-xs font-light text-[#1e1b4b]/80 dark:text-slate-200 font-sans">
                   <li className="flex items-start gap-2.5">
                     <Zap className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span><strong>Acceso a Motores Oficiales</strong>: DeepSeek y Gemini Pro para máxima calidad en optimizaciones de IA</span>
+                    <span>{t('subscription.proCard.feature1').split('Officiel')[0].split('Official')[0]}<strong>Acceso a Motores Oficiales</strong>{t('subscription.proCard.feature1').split('Oficiales')[1] || t('subscription.proCard.feature1').split('Engines')[1]}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span><strong>5 Plantillas Premium</strong>: Harvard, Modern, Minimal, Creative y Swiss</span>
+                    <span>{t('subscription.proCard.feature2').split('Premium')[0]}<strong>{t('subscription.proCard.feature2').includes('Plantillas') ? '5 Plantillas Premium' : '5 Premium Templates'}</strong>{t('subscription.proCard.feature2').split('Premium')[1] || t('subscription.proCard.feature2').split('Templates')[1]}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Velocidad de generación prioritaria en segundos</span>
+                    <span>{t('subscription.proCard.feature3')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Vinculación ilimitada de CVs dentro del tablero Kanban</span>
+                    <span>{t('subscription.proCard.feature4')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <ShieldCheck className="w-4 h-4 text-[#2ecc71] shrink-0 mt-0.5 stroke-[1.75]" />
-                    <span>Soporte prioritario y acceso a mejoras de plantillas</span>
+                    <span>{t('subscription.proCard.feature5')}</span>
                   </li>
                 </ul>
               </div>
@@ -173,7 +175,7 @@ export default async function SubscriptionPage() {
                   className="w-full bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 text-white text-center font-bold py-3 px-4 rounded-[8px] text-xs transition-all shadow-sm flex items-center justify-center gap-1.5"
                 >
                   <Crown className="w-3.5 h-3.5" />
-                  Actualizar a Socio Pro (10 €/mes)
+                  {t('subscription.proCard.btn')}
                 </a>
               </div>
             </div>
@@ -194,23 +196,23 @@ export default async function SubscriptionPage() {
                   <Crown className="w-6 h-6 animate-pulse-subtle stroke-[1.75]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white">¡Gracias por ser Socio Pro!</h3>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium font-sans">Estás en el camino hacia tu mejor versión profesional.</p>
+                  <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white">{t('subscription.proActive.header')}</h3>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium font-sans">{t('subscription.proActive.subHeader')}</p>
                 </div>
               </div>
 
               <div className="space-y-4 text-xs font-light text-[#1e1b4b]/80 dark:text-slate-300 leading-relaxed font-sans">
                 <p>
-                  Tu cuenta dispone de <strong>acceso ejecutivo ilimitado</strong>. Esto significa que estás utilizando los motores oficiales líderes del sector (<strong>DeepSeek y Gemini Pro</strong>) para alinear semánticamente tu perfil con los requisitos específicos que los seleccionadores buscan.
+                  {t('subscription.proActive.bodyText').split('acceso')[0].split('executive')[0]}<strong>{t('subscription.proActive.bodyText').includes('acceso') ? 'acceso ejecutivo ilimitado' : 'unlimited executive access'}</strong>{t('subscription.proActive.bodyText').split('ilimitado')[1] || t('subscription.proActive.bodyText').split('access')[1]}
                 </p>
                 
                 <div className="p-4 bg-[#fafafa] dark:bg-[#0b0f19] border border-[#1e1b4b]/5 dark:border-white/5 rounded-[12px] mt-4">
                   <span className="font-bold text-[#1e1b4b] dark:text-white text-xs flex items-center gap-1.5 mb-1 font-display">
                     <Lightbulb className="w-3.5 h-3.5 text-amber-500 animate-pulse-subtle stroke-[1.75]" />
-                    ¿Sabías qué?
+                    {t('subscription.proActive.didYouKnowTitle')}
                   </span>
                   <span className="block text-[#1e1b4b]/60 dark:text-slate-400 leading-relaxed">
-                    Los candidatos que adaptan minuciosamente su currículum para cada oferta específica **multiplican por 3 la tasa de llamadas para entrevistas**. Tu capacidad para generar rápidamente CVs optimizados con IA te otorga una ventaja competitiva excepcional en el mercado laboral actual.
+                    {t('subscription.proActive.didYouKnowDesc')}
                   </span>
                 </div>
               </div>
@@ -219,10 +221,10 @@ export default async function SubscriptionPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-between items-center font-display">
                 <div className="text-left w-full sm:w-auto">
-                  <span className="text-[10px] text-[#1e1b4b]/40 dark:text-slate-500 font-bold uppercase tracking-wider block">Estado de Facturación</span>
+                  <span className="text-[10px] text-[#1e1b4b]/40 dark:text-slate-555 font-bold uppercase tracking-wider block">{t('subscription.proActive.billingStatusLabel')}</span>
                   <span className="text-xs text-[#2ecc71] font-medium flex items-center gap-1.5 mt-0.5">
                     <ShieldCheck className="w-4 h-4 stroke-[1.75]" />
-                    Suscripción activa y al día
+                    {t('subscription.proActive.billingStatusDesc')}
                   </span>
                 </div>
 
@@ -231,31 +233,31 @@ export default async function SubscriptionPage() {
                   className="w-full sm:w-auto bg-white dark:bg-[#1f2937] border border-[#1e1b4b]/10 dark:border-white/10 hover:bg-[#fafafa] dark:hover:bg-[#1f2937]/80 text-[#1e1b4b] dark:text-slate-200 font-bold py-2.5 px-5 rounded-[8px] text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <CreditCard className="w-4 h-4 text-[#1e1b4b]/60 dark:text-slate-400 stroke-[1.75]" />
-                  Gestionar Método de Pago & Facturas
+                  {t('subscription.proActive.manageBillingBtn')}
                 </a>
               </div>
             </div>
 
             {/* BENEFICIOS ACTIVOS CHECKLIST */}
             <div className="bg-white dark:bg-[#1f2937] p-6 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm">
-              <h4 className="text-xs font-bold text-[#1e1b4b]/60 dark:text-slate-400 uppercase tracking-wider mb-4 font-display">Tus Beneficios Activos</h4>
+              <h4 className="text-xs font-bold text-[#1e1b4b]/60 dark:text-slate-400 uppercase tracking-wider mb-4 font-display">{t('subscription.proActive.benefitsTitle')}</h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans">
                 <div className="flex items-start gap-2.5 text-xs text-[#1e1b4b]/80 dark:text-slate-200">
                   <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 stroke-[1.75]" />
-                  <span><strong>IA Oficial</strong> (DeepSeek / Gemini Pro)</span>
+                  <span>{t('subscription.proActive.benefit1')}</span>
                 </div>
                 <div className="flex items-start gap-2.5 text-xs text-[#1e1b4b]/80 dark:text-slate-200">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 stroke-[1.75]" />
-                  <span><strong>5 Plantillas Premium</strong> de CV</span>
+                  <span>{t('subscription.proActive.benefit2')}</span>
                 </div>
                 <div className="flex items-start gap-2.5 text-xs text-[#1e1b4b]/80 dark:text-slate-200">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 stroke-[1.75]" />
-                  <span>Vinculación ilimitada en Kanban</span>
+                  <span>{t('subscription.proActive.benefit3')}</span>
                 </div>
                 <div className="flex items-start gap-2.5 text-xs text-[#1e1b4b]/80 dark:text-slate-200">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 stroke-[1.75]" />
-                  <span>Descargas e impresión PDF sin límites</span>
+                  <span>{t('subscription.proActive.benefit4')}</span>
                 </div>
               </div>
             </div>
