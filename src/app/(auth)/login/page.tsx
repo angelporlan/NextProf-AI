@@ -70,7 +70,7 @@ export default function LoginPage() {
               <Sparkles className="w-5 h-5" />
             </div>
             <span className="font-display font-bold text-lg tracking-tight text-white">
-              NextProf <span className="text-sky-400">AI</span>
+              Matchply
             </span>
           </Link>
           <h2 className="text-2xl font-bold text-white tracking-tight">Bienvenido de nuevo</h2>

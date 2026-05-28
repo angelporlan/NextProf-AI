@@ -1,4 +1,4 @@
-# Sistema de Diseño e Identidad Visual — NextProf.AI
+# Sistema de Diseño e Identidad Visual — Matchply
 
 Este documento define las directrices visuales, tokens de diseño y principios de interfaz de usuario (UI) para la plataforma web de gestión y optimización de currículums con Inteligencia Artificial.
 

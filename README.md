@@ -1,6 +1,6 @@
-# NextProf AI 🚀
+# Matchply 🚀
 
-NextProf AI es una plataforma web inteligente diseñada para ayudar a candidatos a optimizar sus currículums de forma personalizada utilizando Inteligencia Artificial (motores como DeepSeek, Gemini y OpenRouter) y a realizar un seguimiento visual e interactivo de sus procesos de selección mediante un tablero Kanban.
+Matchply es una plataforma web inteligente diseñada para ayudar a candidatos a optimizar sus currículums de forma personalizada utilizando Inteligencia Artificial (motores como DeepSeek, Gemini y OpenRouter) y a realizar un seguimiento visual e interactivo de sus procesos de selección mediante un tablero Kanban.
 
 ---
 

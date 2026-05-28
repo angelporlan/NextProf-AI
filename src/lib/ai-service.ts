@@ -341,7 +341,7 @@ Asesor de empleo IA optimizado mediante **${providerName}** para encajar con el 
 
 ## Experiencia Profesional
 ### Desarrollador de Software Senior (Optimizado para Oferta)
-**NextProf AI Corp** | *2024 - Presente*
+**Matchply Corp** | *2024 - Presente*
 - Lideré el desarrollo e integración de soluciones SaaS optimizadas mediante la integración de APIs avanzadas de IA.
 - Diseñé esquemas relacionales ágiles que aceleraron el tiempo de carga del motor de rendering un **35%**.
 - Redacté código limpio, robusto y escalable aplicando principios SOLID y optimizando pipelines de integración de datos.

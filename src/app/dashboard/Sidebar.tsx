@@ -80,7 +80,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
             className="h-8 w-8 rounded-[8px] border border-[#1e1b4b]/10 bg-white shadow-sm dark:border-white/10"
           />
           <span className="font-display font-bold text-base tracking-tight text-[#1e1b4b] dark:text-white">
-            NextProf <span className="text-[#8b5cf6]">AI</span>
+            Matchply
           </span>
         </Link>
         <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
                 className="h-10 w-10 rounded-[10px] border border-[#1e1b4b]/10 bg-white shadow-sm transition-all duration-300 hover:scale-105 dark:border-white/10"
               />
               <span className="font-display font-bold text-lg tracking-tight text-[#1e1b4b] dark:text-white">
-                NextProf <span className="text-[#8b5cf6]">AI</span>
+                Matchply
               </span>
             </Link>
             <div className="hidden md:block">

@@ -26,7 +26,7 @@ export default async function LandingPage() {
                 className="h-10 w-10 rounded-[10px] border border-[#1e1b4b]/10 bg-white shadow-sm transition-all duration-300 hover:scale-105 dark:border-white/10"
               />
               <span className="font-display font-bold text-xl tracking-tight text-[#1e1b4b] dark:text-white">
-                NextProf <span className="text-[#8b5cf6]">AI</span>
+                Matchply
               </span>
             </Link>
           </div>
@@ -344,7 +344,7 @@ export default async function LandingPage() {
 
       {/* Footer */}
       <footer className="py-12 border-t border-[#1e1b4b]/10 dark:border-white/10 text-center text-xs text-[#1e1b4b]/40 dark:text-slate-500 font-light bg-[#fafafa] dark:bg-[#0b0f19] transition-colors duration-300">
-        <p>&copy; {new Date().getFullYear()} NextProf AI. {t('landing.footer.tagline')}</p>
+        <p>&copy; {new Date().getFullYear()} Matchply. {t('landing.footer.tagline')}</p>
       </footer>
     </div>
   );

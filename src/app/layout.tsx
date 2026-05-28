@@ -16,10 +16,10 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'NextProf AI | Generador e Inteligencia de Currículums Híbrido',
+  title: 'Matchply | Generador e Inteligencia de Currículums Híbrido',
   description: 'Optimiza tus currículums al instante utilizando IA. Soporte de plantillas Harvard, Modern, Minimal, Creative y Swiss con generación PDF en tiempo real.',
   keywords: ['cv', 'curriculum', 'ia', 'deepseek', 'gemini', 'openrouter', 'pdfkit', 'stripe', 'kanban'],
-  authors: [{ name: 'NextProf AI Team' }],
+  authors: [{ name: 'Matchply Team' }],
 };
 
 export default function RootLayout({

@@ -33,7 +33,7 @@ export default function LogoutPage() {
             <Sparkles className="w-5 h-5" />
           </div>
           <span className="font-display font-bold text-lg tracking-tight text-white mb-8">
-            NextProf <span className="text-sky-400">AI</span>
+            Matchply
           </span>
 
           <div className="flex justify-center mb-6">

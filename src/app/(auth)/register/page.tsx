@@ -71,12 +71,12 @@ export default function RegisterPage() {
               <Sparkles className="w-5 h-5" />
             </div>
             <span className="font-display font-bold text-lg tracking-tight text-white">
-              NextProf <span className="text-sky-400">AI</span>
+              Matchply
             </span>
           </Link>
           <h2 className="text-2xl font-bold text-white tracking-tight">Crea tu cuenta</h2>
           <p className="text-slate-400 text-xs mt-1.5 font-light">
-            Únete a NextProf y empieza a potenciar tu perfil laboral
+            Únete a Matchply y empieza a potenciar tu perfil laboral
           </p>
         </div>
 
