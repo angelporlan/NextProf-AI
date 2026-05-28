@@ -17,7 +17,7 @@ jobs:
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
             # Ir al directorio del proyecto en el VPS
-            cd /app/NextProf-AI
+            cd /app/Matchply
             
             # Traer los últimos cambios de GitHub
             git pull origin main
