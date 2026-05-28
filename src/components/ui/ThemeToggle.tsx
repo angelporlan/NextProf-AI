@@ -4,17 +4,17 @@ import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Check local storage or system preference
+    setMounted(true);
+    // Sync state with what was set by the blocking inline head script
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setTheme('dark');
-      document.documentElement.classList.add('dark');
     } else {
       setTheme('light');
-      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -29,6 +29,18 @@ export default function ThemeToggle() {
       localStorage.setItem('theme', 'light');
     }
   };
+
+  // Render a visual placeholder of the exact same size to avoid layout shift and hydration mismatches
+  if (!mounted) {
+    return (
+      <button
+        className="p-2 rounded-[8px] bg-white dark:bg-[#1f2937] border border-[#1e1b4b]/10 dark:border-white/10 text-transparent flex items-center justify-center shadow-sm select-none pointer-events-none"
+        aria-hidden="true"
+      >
+        <span className="w-4 h-4 block" />
+      </button>
+    );
+  }
 
   return (
     <button
