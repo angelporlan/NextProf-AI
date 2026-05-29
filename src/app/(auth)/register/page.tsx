@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Sparkles, Mail, Lock, User, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { registerUser } from '../actions';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import Logo from '@/components/ui/Logo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -76,13 +77,8 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-md bg-white dark:bg-[#1F2937] p-8 rounded-xl shadow-[0_4px_20px_-4px_rgba(30,27,75,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)] border border-[#1E1B4B]/5 dark:border-[#F3F4F6]/5 relative z-10 transition-all duration-300">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="bg-[#8B5CF6]/10 p-2.5 rounded-xl text-[#8B5CF6] shadow-sm">
-              <Sparkles className="w-5 h-5" strokeWidth={1.75} />
-            </div>
-            <span className="font-display font-bold text-lg tracking-tight text-[#1E1B4B] dark:text-[#F3F4F6]">
-              Matchply
-            </span>
+          <Link href="/" className="inline-block mb-4 hover:opacity-90 transition-opacity">
+            <Logo />
           </Link>
           <h2 className="text-2xl font-bold text-[#1E1B4B] dark:text-[#F3F4F6] tracking-tight font-display">{t('auth.register.title')}</h2>
           <p className="text-[#1E1B4B]/60 dark:text-[#F3F4F6]/60 text-xs mt-1.5 font-light font-sans">

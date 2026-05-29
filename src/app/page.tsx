@@ -4,6 +4,7 @@ import { Sparkles, FileText, CheckCircle, ArrowRight, ChevronRight, BarChart2 } 
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { getServerTranslations } from '@/lib/i18n/server';
+import Logo from '@/components/ui/Logo';
 
 export default async function LandingPage() {
   const session = await auth();
@@ -19,15 +20,8 @@ export default async function LandingPage() {
       <header className="fixed inset-x-0 top-0 z-50 bg-[#fafafa]/80 dark:bg-[#0b0f19]/80 backdrop-blur-md border-b border-[#1e1b4b]/10 dark:border-white/10 shadow-sm transition-colors duration-300">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 z-10">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src="/icon.svg"
-                alt=""
-                className="h-10 w-10 rounded-[10px] border border-[#1e1b4b]/10 bg-white shadow-sm transition-all duration-300 hover:scale-105 dark:border-white/10"
-              />
-              <span className="font-display font-bold text-xl tracking-tight text-[#1e1b4b] dark:text-white">
-                Matchply
-              </span>
+            <Link href="/" className="hover:opacity-90 transition-opacity">
+              <Logo textSize="lg" />
             </Link>
           </div>
 

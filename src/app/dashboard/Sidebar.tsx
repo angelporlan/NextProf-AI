@@ -8,6 +8,7 @@ import { signOut } from 'next-auth/react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import Logo from '@/components/ui/Logo';
 
 interface SidebarProps {
   user: {
@@ -73,15 +74,8 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
     <>
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between h-16 px-4 bg-white dark:bg-[#0b0f19] border-b border-[#1e1b4b]/10 dark:border-white/10 w-full sticky top-0 z-40 transition-colors duration-300">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <img
-            src="/icon.svg"
-            alt=""
-            className="h-8 w-8 rounded-[8px] border border-[#1e1b4b]/10 bg-white shadow-sm dark:border-white/10"
-          />
-          <span className="font-display font-bold text-base tracking-tight text-[#1e1b4b] dark:text-white">
-            Matchply
-          </span>
+        <Link href="/dashboard" className="hover:opacity-90 transition-opacity">
+          <Logo iconSize="sm" textSize="sm" />
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -112,15 +106,8 @@ export default function Sidebar({ user, isPremium }: SidebarProps) {
         <div className="space-y-8">
           {/* Logo & ThemeToggle at original position */}
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src="/icon.svg"
-                alt=""
-                className="h-10 w-10 rounded-[10px] border border-[#1e1b4b]/10 bg-white shadow-sm transition-all duration-300 hover:scale-105 dark:border-white/10"
-              />
-              <span className="font-display font-bold text-lg tracking-tight text-[#1e1b4b] dark:text-white">
-                Matchply
-              </span>
+            <Link href="/" className="hover:opacity-90 transition-opacity">
+              <Logo />
             </Link>
             <div className="hidden md:block">
               <ThemeToggle />
