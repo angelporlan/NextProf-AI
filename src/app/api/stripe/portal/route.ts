@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { stripe, STRIPE_SECRET_KEY } from '@/lib/stripe';
+import { stripe, STRIPE_SECRET_KEY, getAppUrl } from '@/lib/stripe';
 
 export async function GET(req: NextRequest) {
   try {
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${req.nextUrl.origin}/dashboard`,
+      return_url: `${getAppUrl()}/dashboard`,
     });
 
     return NextResponse.redirect(portalSession.url);

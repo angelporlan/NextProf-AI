@@ -17,3 +17,8 @@ export const STRIPE_PRICE_ID_PRO = STRIPE_MODE === 'production'
 export const stripe = new Stripe(STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-04-10' as any,
 });
+
+export const getAppUrl = () => {
+  return (process.env.NEXTAUTH_URL || 'http://localhost:3000').replace(/\/$/, '');
+};
+

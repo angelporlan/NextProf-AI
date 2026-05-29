@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { stripe, STRIPE_SECRET_KEY, STRIPE_PRICE_ID_PRO } from '@/lib/stripe';
+import { stripe, STRIPE_SECRET_KEY, STRIPE_PRICE_ID_PRO, getAppUrl } from '@/lib/stripe';
 import { isProSubscription } from '@/lib/subscription';
 
 export async function GET(req: NextRequest) {
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse('User not found', { status: 404 });
     }
 
-    const origin = req.nextUrl.origin;
+    const origin = getAppUrl();
     let customerId = user.stripeCustomerId;
 
     // 2. Crear cliente de Stripe si no existe
