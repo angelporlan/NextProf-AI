@@ -334,6 +334,172 @@ export function CarouselCard({
 }
 
 // ----------------------------------------------------
+// Sub-component: Mini IDE Real-Time Compiler Mockup
+// ----------------------------------------------------
+export function MiniEditorMockup() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(prev => (prev + 1) % 4);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="mt-8 bg-slate-950 dark:bg-slate-900 rounded-xl p-4 font-mono text-[9px] border border-white/10 dark:border-white/5 shadow-2xl flex gap-3 h-44 overflow-hidden relative select-none">
+      
+      {/* Left Side: Markdown Editor with line numbers */}
+      <div className="w-1/2 flex flex-col gap-2 text-slate-400 text-left border-r border-white/10 pr-2 relative">
+        <div className="flex items-center justify-between text-[8px] text-slate-500 font-semibold mb-1">
+          <div className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse" />
+            <span>fernando_cv.md</span>
+          </div>
+          <span className="text-[7px] text-slate-600 bg-white/5 px-1.5 py-0.5 rounded">Markdown</span>
+        </div>
+        
+        {/* Editor Body: Lines and Line Numbers */}
+        <div className="flex gap-2 flex-1">
+          {/* Line Numbers */}
+          <div className="flex flex-col text-slate-600 text-right select-none text-[8.5px] gap-[4.5px]">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+          </div>
+          
+          {/* Code content */}
+          <div className="flex flex-col gap-[4.5px] flex-1 text-[8.5px]">
+            {/* Line 1 */}
+            <motion.div
+              animate={{ opacity: step >= 0 ? 1 : 0.2 }}
+              className="text-[#8b5cf6] font-bold animate-pulse"
+            >
+              # Fernando González
+            </motion.div>
+            
+            {/* Line 2 */}
+            <motion.div
+              animate={{ opacity: step >= 1 ? 1 : 0.15 }}
+              className="text-slate-500 font-semibold"
+            >
+              ## Experiencia
+            </motion.div>
+            
+            {/* Line 3 */}
+            <motion.div
+              animate={{ opacity: step >= 2 ? 1 : 0.15 }}
+              className="text-emerald-400"
+            >
+              * Admin Contable
+            </motion.div>
+            
+            {/* Line 4 */}
+            <motion.div
+              animate={{ opacity: step >= 3 ? 1 : 0.15 }}
+              className="text-[#8b5cf6]/80 pl-2"
+            >
+              - Método STAR activado
+            </motion.div>
+            
+            {/* Line 5 (Blinking Typing Cursor) */}
+            <div className="flex items-center">
+              <span className="text-slate-500 pl-2">
+                {step === 0 && ""}
+                {step === 1 && ""}
+                {step === 2 && ""}
+                {step === 3 && ""}
+              </span>
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ repeat: Infinity, duration: 0.8 }}
+                className="w-1 h-3 bg-[#8b5cf6] ml-0.5"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side: PDF Compiler Viewer */}
+      <div className="w-1/2 bg-white/5 dark:bg-white/5 rounded-lg p-3 flex flex-col gap-2.5 relative border border-white/5">
+        {/* PDF Header controls */}
+        <div className="flex items-center justify-between text-[7px] text-slate-500 border-b border-white/10 pb-1 mb-0.5">
+          <span>Vista Previa PDF</span>
+          <div className="flex gap-1 items-center">
+            <span className="px-1 bg-white/5 rounded font-bold">75%</span>
+            <span className="w-2 h-2 rounded bg-white/10 hover:bg-white/20" />
+          </div>
+        </div>
+
+        {/* PDF Document Preview elements linked to editor step */}
+        <div className="flex flex-col gap-2 flex-1">
+          {/* Header element (linked to step 0) */}
+          <motion.div
+            animate={{ 
+              opacity: step >= 0 ? 1 : 0.15,
+              scale: step === 0 ? [1, 1.03, 1] : 1
+            }}
+            className="flex flex-col gap-1"
+          >
+            <div className="h-2 w-14 bg-[#8b5cf6] rounded" />
+            <div className="h-1 w-8 bg-slate-400/50 rounded animate-pulse" />
+          </motion.div>
+
+          {/* Experiencia title (linked to step 1) */}
+          <motion.div
+            animate={{ 
+              opacity: step >= 1 ? 1 : 0.15,
+              scale: step === 1 ? [1, 1.03, 1] : 1
+            }}
+            className="h-1.5 w-10 bg-slate-300 rounded"
+          />
+
+          {/* Job Item lines (linked to step 2) */}
+          <motion.div
+            animate={{ 
+              opacity: step >= 2 ? 1 : 0.15,
+              scale: step === 2 ? [1, 1.03, 1] : 1
+            }}
+            className="flex flex-col gap-1 pl-1"
+          >
+            <div className="h-1 w-full bg-slate-300/40 rounded" />
+            <div className="h-1 w-5/6 bg-slate-300/40 rounded" />
+          </motion.div>
+
+          {/* Optimized STAR highlights (linked to step 3) */}
+          <motion.div
+            animate={{ 
+              opacity: step >= 3 ? 1 : 0.15,
+              scale: step === 3 ? [1, 1.02, 1] : 1
+            }}
+            className="h-3 w-full bg-emerald-500/10 border border-emerald-500/30 rounded pl-1 flex items-center overflow-hidden"
+          >
+            <div className="h-1 w-4/5 bg-emerald-400/70 rounded relative overflow-hidden">
+              <motion.div
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+              />
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* PDF Status Indicator */}
+        <div className="flex gap-1.5 items-center mt-auto">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+          </span>
+          <span className="text-[7px] text-emerald-400 font-sans font-bold">Compilado Ok</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------
 // MAIN: LandingPageClient Component
 // ----------------------------------------------------
 export default function LandingPageClient({ session }: { session: any }) {
@@ -769,38 +935,8 @@ export default function LandingPageClient({ session }: { session: any }) {
                   </p>
                 </div>
 
-                {/* Mini IDE Visual Mockup */}
-                <div className="mt-8 bg-slate-950 dark:bg-slate-900 rounded-xl p-4 font-mono text-[9px] border border-white/10 dark:border-white/5 shadow-2xl flex gap-3 h-44 overflow-hidden relative select-none">
-                  {/* Left Side: Markdown Syntax */}
-                  <div className="w-1/2 flex flex-col gap-2 text-slate-400 text-left border-r border-white/10 pr-2">
-                    <div className="flex items-center gap-1.5 text-[8px] text-[#8b5cf6] font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse" /> markdown-editor
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div><span className="text-[#8b5cf6] font-bold"># Fernando González</span></div>
-                      <div className="text-slate-500 font-bold">## Experiencia</div>
-                      <div><span className="text-emerald-400">* Administrador Contable</span></div>
-                      <div className="text-[7.5px] text-slate-500">- Método STAR activado</div>
-                      <div className="text-[7.5px] text-slate-500">- Optimización semántica</div>
-                    </div>
-                  </div>
-                  {/* Right Side: Rendered PDF Sheet */}
-                  <div className="w-1/2 bg-white/5 rounded-lg p-3 flex flex-col gap-2 relative border border-white/5">
-                    <div className="h-2 w-14 bg-white/25 rounded" />
-                    <div className="h-1 w-full bg-white/10 rounded" />
-                    <div className="h-1 w-5/6 bg-white/10 rounded" />
-                    <div className="h-1 w-full bg-white/10 rounded" />
-                    <div className="h-1 w-4/6 bg-white/10 rounded" />
-                    
-                    <div className="flex gap-1.5 items-center mt-auto">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                      </span>
-                      <span className="text-[7.5px] text-emerald-400 font-sans font-semibold">PDF Compilado</span>
-                    </div>
-                  </div>
-                </div>
+                {/* Mini IDE Visual Mockup (Functional Sync Live Compiler) */}
+                <MiniEditorMockup />
               </FeatureCard>
             </motion.div>
 
