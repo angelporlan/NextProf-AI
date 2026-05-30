@@ -590,9 +590,9 @@ export default function LandingPageClient({ session }: { session: any }) {
                 {/* Left Side: Markdown Mock Editor */}
                 <div className="col-span-5 border-r border-[#1e1b4b]/10 dark:border-white/5 p-4 font-mono text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 flex flex-col gap-3.5 text-left overflow-y-auto scrollbar-custom select-none">
                   <div>
-                    <span className="text-[#8b5cf6] font-bold"># Fernando González</span>
+                    <span className="text-[#8b5cf6] font-bold"># Alejandro Martinez</span>
                     <br />
-                    <span className="text-slate-400 dark:text-slate-500">Administrador Contable</span>
+                    <span className="text-slate-400 dark:text-slate-500">Consultor y Arquitecto de Datos</span>
                   </div>
                   <div>
                     <span className="text-indigo-400 font-semibold">## Experiencia</span>
