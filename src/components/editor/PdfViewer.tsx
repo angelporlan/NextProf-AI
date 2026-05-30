@@ -133,7 +133,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
 
           {/* Download PDF button */}
           <a
-            href={`/api/pdf?cvId=${cvId}`}
+            href={`/api/pdf?cvId=${cvId}&download=true`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all shadow-sm"
@@ -166,7 +166,7 @@ export default function PdfViewer({ cvId, version, isFullScreen, onToggleFullScr
                 <span>{t('editor.pdf.retry')}</span>
               </button>
               <a
-                href={`/api/pdf?cvId=${cvId}`}
+                href={`/api/pdf?cvId=${cvId}&download=true`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-4 py-2 rounded-[8px] bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 text-xs font-bold text-[#8b5cf6] hover:bg-[#8b5cf6]/20 transition-all shadow-sm"

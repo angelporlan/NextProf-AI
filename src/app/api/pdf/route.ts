@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { cvs } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { generatePdfBuffer } from '@/lib/pdf-engine';
+import { createAuditLog } from '@/lib/audit';
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,6 +33,15 @@ export async function GET(req: NextRequest) {
     // Comprobar propiedad
     if (cv.userId !== session.user.id) {
       return new NextResponse('Forbidden', { status: 403 });
+    }
+
+    // Log de auditoría para descarga de PDF
+    const isDownload = searchParams.get('download') === 'true';
+    if (isDownload) {
+      await createAuditLog('cv_download_pdf', session.user.id, session.user.email || null, {
+        cvId: cv.id,
+        title: cv.title
+      });
     }
 
     const buffer = await generatePdfBuffer(cv.content, {

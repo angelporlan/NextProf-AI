@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { cvs, jobOffers, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { AIService } from '@/lib/ai-service';
+import { createAuditLog } from '@/lib/audit';
 
 export async function POST(req: NextRequest) {
   try {
@@ -69,6 +70,16 @@ export async function POST(req: NextRequest) {
         scale: baseCv.scale
       })
       .returning();
+
+    // Log de auditoría para optimización por IA
+    await createAuditLog("cv_optimize_ai", userId, user.email, {
+      baseCvId,
+      optimizedCvId: optimizedCv.id,
+      jobTitle,
+      company,
+      platform,
+      addToKanban
+    });
 
     // 5. Guardar Candidatura en Kanban
     if (addToKanban) {
