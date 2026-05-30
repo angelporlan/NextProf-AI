@@ -585,10 +585,10 @@ export default function LandingPageClient({ session }: { session: any }) {
               </div>
 
               {/* Main Content Area: Split-Screen */}
-              <div className="flex-1 grid grid-cols-2 overflow-hidden h-full">
+              <div className="flex-1 grid grid-cols-12 overflow-hidden h-full">
 
                 {/* Left Side: Markdown Mock Editor */}
-                <div className="border-r border-[#1e1b4b]/10 dark:border-white/5 p-4 font-mono text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 flex flex-col gap-3.5 text-left overflow-y-auto scrollbar-custom select-none">
+                <div className="col-span-5 border-r border-[#1e1b4b]/10 dark:border-white/5 p-4 font-mono text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 flex flex-col gap-3.5 text-left overflow-y-auto scrollbar-custom select-none">
                   <div>
                     <span className="text-[#8b5cf6] font-bold"># Fernando González</span>
                     <br />
@@ -613,8 +613,8 @@ export default function LandingPageClient({ session }: { session: any }) {
                 </div>
 
                 {/* Right Side: Real image A4 Render Preview */}
-                <div className="bg-slate-200/50 dark:bg-slate-900/50 p-3 flex items-center justify-center relative overflow-hidden h-full select-none">
-                  <div className="bg-white rounded-md shadow-md w-full h-[95%] overflow-hidden relative border border-[#1e1b4b]/5">
+                <div className="col-span-7 bg-slate-200/50 dark:bg-slate-900/50 p-3 flex items-center justify-center relative overflow-hidden h-full select-none">
+                  <div className="bg-white rounded-md shadow-md w-[92%] aspect-[1/1.414] overflow-hidden relative border border-[#1e1b4b]/5 flex items-center justify-center">
                     <img
                       src="/assets/images/cvs/harvard.png"
                       alt="Curriculum Preview"
