@@ -707,63 +707,209 @@ export default function LandingPageClient({ session }: { session: any }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
 
-            {/* Feature Card 1 */}
+            {/* Bento Card 1: Split-Screen Editor (col-span 7) */}
             <motion.div
               initial={{ opacity: 0, y: 35 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.1 }}
+              className="md:col-span-7"
             >
-              <FeatureCard className="bg-white dark:bg-[#1f2937] p-8 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-md cursor-default group h-full">
-                <div className="bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 p-4 rounded-xl text-[#8b5cf6] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
-                  <FileText className="w-6 h-6 stroke-[1.75]" />
+              <FeatureCard className="bg-white dark:bg-[#1f2937]/50 p-8 rounded-[16px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-lg cursor-default group h-full flex flex-col justify-between overflow-hidden relative">
+                <div>
+                  <div className="bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 p-4 rounded-xl text-[#8b5cf6] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
+                    <FileText className="w-6 h-6 stroke-[1.75]" />
+                  </div>
+                  <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.editor.title')}</h3>
+                  <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed max-w-xl">
+                    {t('landing.features.editor.desc')}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.editor.title')}</h3>
-                <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed">
-                  {t('landing.features.editor.desc')}
-                </p>
+
+                {/* Mini IDE Visual Mockup */}
+                <div className="mt-8 bg-slate-950 dark:bg-slate-900 rounded-xl p-4 font-mono text-[9px] border border-white/10 dark:border-white/5 shadow-2xl flex gap-3 h-44 overflow-hidden relative select-none">
+                  {/* Left Side: Markdown Syntax */}
+                  <div className="w-1/2 flex flex-col gap-2 text-slate-400 text-left border-r border-white/10 pr-2">
+                    <div className="flex items-center gap-1.5 text-[8px] text-[#8b5cf6] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse" /> markdown-editor
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div><span className="text-[#8b5cf6] font-bold"># Fernando González</span></div>
+                      <div className="text-slate-500 font-bold">## Experiencia</div>
+                      <div><span className="text-emerald-400">* Administrador Contable</span></div>
+                      <div className="text-[7.5px] text-slate-500">- Método STAR activado</div>
+                      <div className="text-[7.5px] text-slate-500">- Optimización semántica</div>
+                    </div>
+                  </div>
+                  {/* Right Side: Rendered PDF Sheet */}
+                  <div className="w-1/2 bg-white/5 rounded-lg p-3 flex flex-col gap-2 relative border border-white/5">
+                    <div className="h-2 w-14 bg-white/25 rounded" />
+                    <div className="h-1 w-full bg-white/10 rounded" />
+                    <div className="h-1 w-5/6 bg-white/10 rounded" />
+                    <div className="h-1 w-full bg-white/10 rounded" />
+                    <div className="h-1 w-4/6 bg-white/10 rounded" />
+                    
+                    <div className="flex gap-1.5 items-center mt-auto">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span className="text-[7.5px] text-emerald-400 font-sans font-semibold">PDF Compilado</span>
+                    </div>
+                  </div>
+                </div>
               </FeatureCard>
             </motion.div>
 
-            {/* Feature Card 2 */}
+            {/* Bento Card 2: AI Semantic Optimization (col-span 5) */}
             <motion.div
               initial={{ opacity: 0, y: 35 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              className="md:col-span-5"
             >
-              <FeatureCard className="bg-white dark:bg-[#1f2937] p-8 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-md cursor-default group h-full relative">
-                <div className="bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 p-4 rounded-xl text-[#8b5cf6] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
-                  <Sparkles className="w-6 h-6 stroke-[1.75]" />
+              <FeatureCard className="bg-white dark:bg-[#1f2937]/50 p-8 rounded-[16px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-lg cursor-default group h-full flex flex-col justify-between overflow-hidden relative">
+                <div>
+                  <div className="bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 p-4 rounded-xl text-[#8b5cf6] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
+                    <Sparkles className="w-6 h-6 stroke-[1.75]" />
+                  </div>
+                  <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.ai.title')}</h3>
+                  <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed">
+                    {t('landing.features.ai.desc')}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.ai.title')}</h3>
-                <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed mb-4">
-                  {t('landing.features.ai.desc')}
-                </p>
-                {/* 10x Highlight counter in Viewport */}
-                <div className="absolute top-4 right-4 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-black px-2.5 py-1 rounded-full font-display">
-                  <AnimatedNumber value={10} suffix="x Match" />
+
+                {/* Animated AI Radar Match */}
+                <div className="mt-8 flex items-center justify-center relative h-44 overflow-visible select-none">
+                  {/* Glowing purple aura */}
+                  <div className="absolute inset-0 bg-[#8b5cf6]/5 rounded-full blur-2xl animate-pulse" />
+
+                  {/* Rotating dashed ring */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 16, ease: 'linear' }}
+                    className="absolute w-28 h-28 rounded-full border-2 border-dashed border-[#8b5cf6]/20 flex items-center justify-center"
+                  />
+
+                  {/* Reverse rotating ring */}
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
+                    className="absolute w-24 h-24 rounded-full border-2 border-dashed border-emerald-500/20"
+                  />
+
+                  {/* Center glowing Match Sphere */}
+                  <div className="absolute flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-full w-20 h-20 shadow-xl border border-[#8b5cf6]/20 group-hover:scale-105 transition-transform duration-500">
+                    <Sparkles className="w-5 h-5 text-[#8b5cf6] animate-bounce" />
+                    <span className="text-[10px] font-black text-slate-800 dark:text-white mt-1">98% Match</span>
+                  </div>
+
+                  {/* Floating STAR tag chips */}
+                  <motion.div
+                    animate={{ y: [0, -5, 0], x: [0, 2, 0] }}
+                    transition={{ repeat: Infinity, duration: 3.2, ease: 'easeInOut' }}
+                    className="absolute top-2 left-2 bg-[#8b5cf6] text-white text-[7.5px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-0.5 border border-[#8b5cf6]/10"
+                  >
+                    <span>Situation</span>
+                  </motion.div>
+                  <motion.div
+                    animate={{ y: [0, -5, 0], x: [0, -2, 0] }}
+                    transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut', delay: 0.7 }}
+                    className="absolute top-8 right-2 bg-emerald-500 text-white text-[7.5px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-0.5 border border-emerald-500/10"
+                  >
+                    <span>Task</span>
+                  </motion.div>
+                  <motion.div
+                    animate={{ y: [0, 5, 0], x: [0, 2, 0] }}
+                    transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 1.4 }}
+                    className="absolute bottom-6 left-4 bg-indigo-500 text-white text-[7.5px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-0.5 border border-indigo-500/10"
+                  >
+                    <span>Action</span>
+                  </motion.div>
+                  <motion.div
+                    animate={{ y: [0, 5, 0], x: [0, -2, 0] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut', delay: 2.1 }}
+                    className="absolute bottom-4 right-4 bg-[#2ecc71] text-white text-[7.5px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-0.5 border border-[#2ecc71]/10"
+                  >
+                    <span>Result</span>
+                  </motion.div>
                 </div>
               </FeatureCard>
             </motion.div>
 
-            {/* Feature Card 3 */}
+            {/* Bento Card 3: Kanban Applications Pipeline (col-span 12) */}
             <motion.div
               initial={{ opacity: 0, y: 35 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6, delay: 0.3 }}
+              className="md:col-span-12"
             >
-              <FeatureCard className="bg-white dark:bg-[#1f2937] p-8 rounded-[12px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-md cursor-default group h-full">
-                <div className="bg-[#2ecc71]/10 border border-[#2ecc71]/20 p-4 rounded-xl text-[#2ecc71] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
-                  <BarChart2 className="w-6 h-6 stroke-[1.75]" />
+              <FeatureCard className="bg-white dark:bg-[#1f2937]/50 p-8 rounded-[16px] border border-[#1e1b4b]/10 dark:border-white/5 shadow-sm transition-all hover:-translate-y-1.5 hover:shadow-lg cursor-default group h-full overflow-hidden relative">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-8 h-full">
+                  {/* Left Column: Text */}
+                  <div className="lg:w-5/12 text-left flex flex-col justify-center h-full">
+                    <div className="bg-[#2ecc71]/10 border border-[#2ecc71]/20 p-4 rounded-xl text-[#2ecc71] w-fit mb-6 transition-transform duration-300 group-hover:scale-110">
+                      <BarChart2 className="w-6 h-6 stroke-[1.75]" />
+                    </div>
+                    <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.kanban.title')}</h3>
+                    <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed">
+                      {t('landing.features.kanban.desc')}
+                    </p>
+                  </div>
+
+                  {/* Right Column: Mini Kanban UI Preview */}
+                  <div className="lg:w-7/12 w-full bg-slate-50 dark:bg-slate-800/40 border border-[#1e1b4b]/10 dark:border-white/5 rounded-2xl p-5 shadow-inner flex gap-4 h-[210px] select-none overflow-hidden relative">
+                    
+                    {/* Column 1: Postulado */}
+                    <div className="flex-1 flex flex-col gap-2.5">
+                      <div className="flex items-center justify-between text-[8px] font-bold text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded-md">
+                        <span>Postulado</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                      </div>
+                      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col gap-1.5 transform hover:scale-[1.03] transition-transform cursor-grab">
+                        <div className="text-[8.5px] font-bold text-slate-700 dark:text-slate-200 leading-tight">Software Engineer</div>
+                        <div className="text-[7.5px] text-slate-400">Google • Harvard CV</div>
+                      </div>
+                      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col gap-1.5 transform hover:scale-[1.03] transition-transform cursor-grab">
+                        <div className="text-[8.5px] font-bold text-slate-700 dark:text-slate-200 leading-tight">Data Analyst</div>
+                        <div className="text-[7.5px] text-slate-400">Netflix • Modern CV</div>
+                      </div>
+                    </div>
+
+                    {/* Column 2: Entrevista */}
+                    <div className="flex-1 flex flex-col gap-2.5">
+                      <div className="flex items-center justify-between text-[8px] font-bold text-[#8b5cf6] bg-[#8b5cf6]/10 px-2.5 py-1 rounded-md">
+                        <span>Entrevista</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]" />
+                      </div>
+                      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col gap-1.5 transform hover:scale-[1.03] transition-transform cursor-grab">
+                        <div className="text-[8.5px] font-bold text-slate-700 dark:text-slate-200 leading-tight">Fullstack Dev</div>
+                        <div className="text-[7.5px] text-slate-400">Stripe • Swiss CV</div>
+                        <div className="flex gap-1.5 mt-0.5">
+                          <span className="bg-[#8b5cf6]/10 text-[#8b5cf6] text-[6.5px] font-bold px-1.5 py-0.5 rounded">Mañana 10:00</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column 3: Oferta */}
+                    <div className="flex-1 flex flex-col gap-2.5">
+                      <div className="flex items-center justify-between text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md">
+                        <span>Oferta</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      </div>
+                      <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-md border border-slate-100 dark:border-white/5 flex flex-col gap-1.5 border-l-2 border-l-emerald-500 transform hover:scale-[1.03] transition-transform cursor-grab animate-[pulse_2s_infinite]">
+                        <div className="text-[8.5px] font-bold text-slate-700 dark:text-slate-200 leading-tight">AI Lead</div>
+                        <div className="text-[7.5px] text-slate-400">OpenAI • Minimal CV</div>
+                        <div className="text-[6.5px] text-emerald-500 font-extrabold mt-0.5">🎉 ¡Aceptada!</div>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold font-display text-[#1e1b4b] dark:text-white mb-3">{t('landing.features.kanban.title')}</h3>
-                <p className="text-[#1e1b4b]/60 dark:text-slate-400 text-sm font-light leading-relaxed">
-                  {t('landing.features.kanban.desc')}
-                </p>
               </FeatureCard>
             </motion.div>
 
