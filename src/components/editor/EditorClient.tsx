@@ -757,7 +757,7 @@ export default function EditorClient({ cv, isPremium, availablePrompts, baseCvCo
         confirmLabel={t('editor.upgradeModal.confirm')}
         onConfirm={() => {
           setIsUpgradeModalOpen(false);
-          router.push('/dashboard');
+          window.location.href = '/api/stripe/checkout';
         }}
       />
 

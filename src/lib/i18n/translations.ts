@@ -501,8 +501,8 @@ export const translations = {
       },
       upgradeModal: {
         title: 'Plantilla Premium',
-        message: 'Las plantillas Modern, Minimal, Creative y Swiss son exclusivas para socios PRO.\n\n¡Actualiza tu cuenta en el Dashboard para utilizarlas y potenciar tu impacto profesional!',
-        confirm: 'Ir al Dashboard',
+        message: 'Las plantillas Modern, Minimal, Creative y Swiss son exclusivas para socios PRO.\n\n¡Suscríbete ahora para utilizarlas y potenciar tu impacto profesional!',
+        confirm: 'Suscribirse',
       },
       aiModal: {
         title: 'Optimización Inteligente por IA',
@@ -1035,8 +1035,8 @@ export const translations = {
       },
       upgradeModal: {
         title: 'Premium Template',
-        message: 'Modern, Minimal, Creative, and Swiss templates are exclusive to PRO members.\n\nUpgrade your account in the Dashboard to use them and boost your professional impact!',
-        confirm: 'Go to Dashboard',
+        message: 'Modern, Minimal, Creative, and Swiss templates are exclusive to PRO members.\n\nSubscribe now to use them and boost your professional impact!',
+        confirm: 'Subscribe',
       },
       aiModal: {
         title: 'Smart AI Optimization',
