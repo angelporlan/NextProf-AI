@@ -499,6 +499,16 @@ export function MiniEditorMockup() {
   );
 }
 
+interface KanbanCardType {
+  id: string;
+  title: string;
+  company: string;
+  template: string;
+  status: string;
+  info?: string;
+  accepted?: boolean;
+}
+
 // ----------------------------------------------------
 // MAIN: LandingPageClient Component
 // ----------------------------------------------------
@@ -512,7 +522,7 @@ export default function LandingPageClient({ session }: { session: any }) {
   const [peekingCardIndex, setPeekingCardIndex] = useState<number | null>(null);
 
   // Mini Kanban state on landing page
-  const [kanbanCards, setKanbanCards] = useState([
+  const [kanbanCards, setKanbanCards] = useState<KanbanCardType[]>([
     { id: '1', title: 'Software Engineer', company: 'Google', template: 'Harvard CV', status: 'postulado' },
     { id: '2', title: 'Data Analyst', company: 'Netflix', template: 'Modern CV', status: 'postulado' },
     { id: '3', title: 'Fullstack Dev', company: 'Stripe', template: 'Swiss CV', status: 'entrevista', info: 'Mañana 10:00' },
@@ -1143,7 +1153,7 @@ export default function LandingPageClient({ session }: { session: any }) {
                                 key={card.id}
                                 layout
                                 draggable
-                                onDragStart={(e) => handleDragStart(e, card.id)}
+                                onDragStart={(e: any) => handleDragStart(e, card.id)}
                                 whileDrag={{ scale: 1.05, rotate: 1.5 }}
                                 className={`bg-white dark:bg-slate-900 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-white/5 flex flex-col gap-1.5 cursor-grab active:cursor-grabbing transition-all hover:border-[#8b5cf6]/30 ${
                                   card.accepted ? 'border-l-2 border-l-emerald-500 dark:border-l-emerald-500 shadow-md ring-2 ring-emerald-500/10 dark:ring-emerald-500/20' : ''
